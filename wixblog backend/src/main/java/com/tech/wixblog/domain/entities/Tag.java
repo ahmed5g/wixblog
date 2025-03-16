@@ -11,18 +11,20 @@ import java.util.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "Tags")
+@Table(name = "tags")
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+
+    @Column(nullable = false, unique = true)
     private String name;
 
 
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Post> posts = new HashSet<>();
 
     @Override

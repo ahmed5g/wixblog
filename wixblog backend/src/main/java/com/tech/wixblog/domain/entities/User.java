@@ -47,6 +47,7 @@ public class User {
         return Objects.hash(id, name, email, password, createdAt);
     }
 
+    @PrePersist
     protected void createdAt(){
         this.createdAt = LocalDateTime.now();
     }
