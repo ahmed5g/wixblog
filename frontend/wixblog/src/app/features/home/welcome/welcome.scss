@@ -1,0 +1,14 @@
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 20px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  text-align: center;
+}
+
+#googleBtn {
+  margin-top: 10px;
+}
