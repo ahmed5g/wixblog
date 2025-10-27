@@ -1,0 +1,40 @@
+<div class="admin-container">
+  <h2>User Management</h2>
+
+  <div class="users-table">
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+                <span [class]="user.role === 'ROLE_ADMIN' ? 'badge admin' : 'badge user'">
+                  {{ user.role === 'ROLE_ADMIN' ? 'Admin' : 'User' }}
+                </span>
+        </td>
+        <td>
+          <button *ngIf="user.role === 'ROLE_USER'"
+                  (click)="promoteToAdmin(user.id)"
+                  class="btn-promote">
+            Make Admin
+          </button>
+          <button *ngIf="user.role === 'ROLE_ADMIN' && user.id !== currentUserId"
+                  (click)="demoteToUser(user.id)"
+                  class="btn-demote">
+            Make User
+          </button>
+          <span *ngIf="user.id === currentUserId" class="current-user">You</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

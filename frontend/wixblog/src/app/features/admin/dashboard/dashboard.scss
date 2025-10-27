@@ -1,0 +1,122 @@
+// dashboard.scss
+.dashboard-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.user-management-preview {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: 2rem;
+}
+
+.users-list {
+  margin: 1rem 0;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-email {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.role-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &.admin {
+    background: #dc3545;
+    color: white;
+  }
+
+  &.user {
+    background: #6c757d;
+    color: white;
+  }
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-promote, .btn-demote {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.btn-promote {
+  background: #28a745;
+  color: white;
+}
+
+.btn-demote {
+  background: #ffc107;
+  color: black;
+}
+
+.view-all-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.admin-stats {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+
+  p {
+    margin: 0.5rem 0;
+  }
+}
+
+// Your existing styles...
+.dashboard-header, .dashboard-nav, .welcome-card, .features {
+  // Keep your existing styles
+}
