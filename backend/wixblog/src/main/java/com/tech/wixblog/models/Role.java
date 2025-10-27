@@ -1,5 +1,5 @@
 package com.tech.wixblog.models;
 
 public enum Role {
-    ADMIN, USER
+    ROLE_ADMIN, ROLE_USER
 }
