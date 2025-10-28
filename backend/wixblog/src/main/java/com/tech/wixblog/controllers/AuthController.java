@@ -37,6 +37,7 @@ public class AuthController {
         String name = principal.getAttribute("name");
         String profilePicture = principal.getAttribute("picture");
 
+
         log.info("Processing OAuth2 login for user: {}", email);
 
         User user = userService.findOrCreateUser(email, name, profilePicture);

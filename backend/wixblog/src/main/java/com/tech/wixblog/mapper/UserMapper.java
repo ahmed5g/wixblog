@@ -21,6 +21,7 @@ public interface UserMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "role", target = "role")
+    @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(expression = "java(true)", target = "authenticated")
     AuthResponseDTO userToAuthResponseDTO(User user);
 
