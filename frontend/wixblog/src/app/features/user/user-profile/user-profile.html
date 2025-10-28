@@ -1,0 +1,110 @@
+<div class="min-h-screen bg-base-100 py-10 px-4 flex justify-center">
+  <div class="max-w-5xl w-full space-y-6" *ngIf="!isLoading && user">
+
+    <!-- PROFILE HEADER -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body flex flex-col md:flex-row items-center gap-6">
+
+        <!-- Avatar -->
+        <div class="avatar">
+          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img [src]="user?.profilePicture || 'assets/img/default-avatar.png'" alt="User avatar">
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 text-center md:text-left">
+          <h2 class="text-3xl font-bold text-primary">{{ user?.name }}</h2>
+          <p class="text-base-content/70 mt-1">{{   'No bio yet.' }}</p>
+
+          <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
+            <div class="badge badge-primary badge-outline">Angular</div>
+            <div class="badge badge-secondary badge-outline">Spring Boot</div>
+            <div class="badge badge-accent badge-outline">UI/UX</div>
+          </div>
+
+          <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-4 text-sm text-base-content/70">
+            <span class="flex items-center gap-1">
+              <i class="fa fa-envelope"></i> {{ user?.email }}
+            </span>
+
+            <span class="flex items-center gap-1">
+              <i class="fa fa-calendar"></i> Joined {{ user?.createdAt | date }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2 mt-4 md:mt-0">
+          <button class="btn btn-primary btn-sm">
+            <i class="fa fa-edit mr-1"></i> Edit
+          </button>
+          <button class="btn btn-outline btn-secondary btn-sm" (click)="logout()">
+            <i class="fa fa-sign-out-alt mr-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs tabs-boxed bg-base-200">
+      <a class="tab tab-bordered" (click)="activeTab='about'" [class.tab-active]="activeTab==='about'">About</a>
+      <a class="tab tab-bordered" (click)="activeTab='posts'" [class.tab-active]="activeTab==='posts'">Posts</a>
+      <a class="tab tab-bordered" (click)="activeTab='activity'" [class.tab-active]="activeTab==='activity'">Activity</a>
+    </div>
+
+    <!-- ABOUT TAB -->
+    <div *ngIf="activeTab==='about'" class="card bg-base-200">
+      <div class="card-body">
+        <h3 class="text-xl font-semibold mb-2">About Me</h3>
+        <p class="leading-relaxed text-base-content/80">
+          {{  'This user has not written an about section yet.' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- POSTS TAB -->
+    <div *ngIf="activeTab==='posts'" class="grid md:grid-cols-2 gap-4">
+      <div  class="card bg-base-200 hover:shadow-lg transition-all">
+        <div class="card-body">
+          <h4 class="font-semibold text-lg"></h4>
+          <p class="text-sm text-base-content/70 mt-1"></p>
+          <button class="btn btn-primary btn-sm mt-3">
+            Read More
+          </button>
+        </div>
+      </div>
+
+      <div  class="text-center text-base-content/60 col-span-2 py-8">
+        No posts yet.
+      </div>
+    </div>
+
+    <!-- ACTIVITY TAB -->
+    <div *ngIf="activeTab==='activity'" class="card bg-base-200">
+      <div class="card-body">
+        <ul class="timeline timeline-vertical">
+          <li>
+            <div class="timeline-start"></div>
+            <div class="timeline-middle">
+              <div class="badge badge-primary"></div>
+            </div>
+            <div class="timeline-end">Last active on ZenBlog</div>
+          </li>
+          <li *ngIf="isAdmin">
+            <div class="timeline-start">Admin</div>
+            <div class="timeline-middle">
+              <div class="badge badge-secondary"></div>
+            </div>
+            <div class="timeline-end">Managing {{ allUsers.length }} users</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="flex justify-center items-center h-screen">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+</div>
