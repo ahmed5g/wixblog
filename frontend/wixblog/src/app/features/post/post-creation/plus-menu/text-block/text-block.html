@@ -1,0 +1,4 @@
+<div class="relative">
+  <quill-editor [(ngModel)]="block.content" [modules]="quillModules" class="min-h-[100px]"></quill-editor>
+  <ng-content></ng-content> <!-- for floating + menu -->
+</div>
