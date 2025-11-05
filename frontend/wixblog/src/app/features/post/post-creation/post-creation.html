@@ -1,0 +1,45 @@
+<div class="flex justify-center bg-base-200 min-h-screen py-8 px-4">
+  <div class="w-full max-w-3xl relative">
+
+    <!-- Form for title -->
+    <form [formGroup]="form" class="space-y-8">
+
+      <!-- Title -->
+      <input type="text" placeholder="Title" formControlName="title"
+             class="input input-ghost w-full text-4xl font-semibold bg-transparent focus:outline-none"/>
+
+      <!-- Post blocks -->
+      <div class="space-y-6">
+        <div *ngFor="let block of blocks; let i = index" class="relative flex items-start group">
+
+          <!-- Floating + menu per block -->
+          <div class="flex-shrink-0 mr-4 hidden group-hover:flex flex-col gap-2">
+            <app-plus-menu
+              (addText)="addTextBlock(i)"
+              (addImage)="addImageBlock(i)"
+              (addVideo)="addVideoBlock(i)"
+              (addDivider)="addDividerBlock(i)"
+            ></app-plus-menu>
+          </div>
+
+          <!-- Block content -->
+          <div class="flex-1">
+            <ng-container [ngSwitch]="block.type">
+              <app-text-block *ngSwitchCase="'text'" [block]="block"></app-text-block>
+              <app-image-block *ngSwitchCase="'image'" [block]="block"></app-image-block>
+              <app-video-block *ngSwitchCase="'video'" [block]="block"></app-video-block>
+              <app-divider-block *ngSwitchCase="'divider'"></app-divider-block>
+            </ng-container>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Publish button -->
+      <div class="flex justify-end mt-6">
+        <button type="button" class="btn btn-primary rounded-full px-8" (click)="onPublish()">Publish</button>
+      </div>
+
+    </form>
+  </div>
+</div>

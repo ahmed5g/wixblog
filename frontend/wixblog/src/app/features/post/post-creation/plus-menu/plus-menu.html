@@ -1,0 +1,20 @@
+<div class="relative">
+  <!-- Floating + button -->
+  <button
+    class="btn btn-circle btn-outline btn-sm"
+    (click)="toggleMenu()"
+    aria-label="Add content"
+  >
+    +
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div
+    *ngIf="menuOpen"
+    class="absolute left-12 top-0 z-50 bg-base-100 shadow-lg rounded-xl p-3 flex flex-col space-y-2 w-40"
+  >
+    <button class="btn btn-ghost justify-start" (click)="addImage.emit()">📷 Add Image</button>
+    <button class="btn btn-ghost justify-start" (click)="addEmbed.emit()">🎥 Embed Video</button>
+    <button class="btn btn-ghost justify-start" (click)="addDivider.emit()">➖ Divider</button>
+  </div>
+</div>

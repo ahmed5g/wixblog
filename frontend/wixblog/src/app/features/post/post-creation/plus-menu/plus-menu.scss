@@ -1,0 +1,12 @@
+:host {
+  position: relative;
+  z-index: 10;
+}
+
+button {
+  transition: transform 0.15s ease;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
