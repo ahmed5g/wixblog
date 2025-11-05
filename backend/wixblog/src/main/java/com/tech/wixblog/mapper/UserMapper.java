@@ -1,11 +1,15 @@
 package com.tech.wixblog.mapper;
 
 import com.tech.wixblog.dto.AuthResponseDTO;
+
 import com.tech.wixblog.dto.UserDTO;
 import com.tech.wixblog.models.User;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -15,6 +19,7 @@ public interface UserMapper {
     @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(source = "profilePicture", target = "profilePicture")
     UserDTO userToUserDTO(User user);
+    List<UserDTO> userToUserDTOs (List<User> users);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "email", target = "email")
@@ -41,4 +46,7 @@ public interface UserMapper {
                 .authenticated(authenticated)
                 .build();
     }
+
+
+
 }
