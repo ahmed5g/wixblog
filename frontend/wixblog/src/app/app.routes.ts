@@ -1,30 +1,26 @@
 import { Routes } from '@angular/router';
-import {LoginForm} from './features/auth/login-form/login-form';
-import { UserProfile} from './features/user/user-profile/user-profile';
-import {authGuard} from './core/guards/auth-guard';
-import {LoginSuccessComponent} from './features/auth/login-success/login-success';
-import {Admin} from './features/admin/admin/admin';
-import {adminGuard} from './core/guards/admin-guard';
-import {Main} from './features/home/main/main';
+import { Layout } from './layout/components/layout';
+import { NotFound } from './features/util/not-found';
+import {Landing} from './features/landing';
+import {LoginForm} from './features/auth/login-form';
+import {authGuard} from './features/auth/auth-guard';
+import {GetStarted} from './features/home/get-started';
+
+
 
 export const routes: Routes = [
-  { path: 'login', component: LoginForm },
-  { path: 'login-success', component: LoginSuccessComponent },
-
   {
     path: '',
-    component: Main,
-    canActivate: [authGuard]
+    component: Layout,
+    children: [
+      { path: '', component: Landing },
+      { path: 'welcome', component: GetStarted},
+      { path: 'pages', loadChildren: () => import('./features/pages.routes').then(m => m.Pages) },
+      { path: 'user', loadChildren: () => import('./features/user/user.routes').then(m => m.UserRoutes) }
+    ]
   },
-  {
-    path: 'profile',
-    component: UserProfile,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'admin',
-    component: Admin,
-    canActivate: [authGuard, adminGuard]
-  },
-  { path: '**', redirectTo: '/main', pathMatch: 'full' }
+  { path: 'auth', loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES) },
+  { path: 'notfound', component: NotFound },
+  { path: 'login', component: LoginForm },
+  { path: '**', redirectTo: '/notfound' }
 ];

@@ -1,14 +1,29 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
 import { provideRouter } from '@angular/router';
-
+import { QuillModule } from 'ngx-quill';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
-import {provideHttpClient, withFetch} from '@angular/common/http';
+
+import { HttpInterceptorFn } from '@angular/common/http';
+import {provideClientHydration} from '@angular/platform-browser';
+
+export const withCredentialsInterceptor: HttpInterceptorFn = (req, next) => {
+  const cloned = req.clone({ withCredentials: true });
+  return next(cloned);
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withFetch())
+    importProvidersFrom(QuillModule.forRoot()),
+    provideClientHydration(),
+
+
+    provideHttpClient(
+      withFetch(),
+
+      withInterceptors([withCredentialsInterceptor])
+    )
   ]
 };

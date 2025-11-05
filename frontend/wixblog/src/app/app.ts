@@ -1,26 +1,46 @@
-import {Component, OnInit, signal} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {AuthService} from './core/auth/auth';
-import {Header} from './core/layout/header/header';
-import {Footer} from './core/layout/footer/footer';
+import {Component, HostListener, OnInit, signal} from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { SideBarMenu } from './shared/components/side-bar-menu/side-bar-menu';
+import { AuthenticationService } from './shared/services/services/authentication.service';
+import { AuthResponseDto } from './shared/services/models/auth-response-dto';
+import { CommonModule, NgIf } from '@angular/common';
+import {window} from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterOutlet,
-    Header,
-    Footer
-
-  ],
-  templateUrl: './app.html',
   standalone: true,
-  styleUrl: './app.scss'
+  imports: [RouterOutlet, CommonModule],
+  templateUrl: './app.html',
+  styleUrls: ['./app.scss'],
 })
-export class App implements OnInit{
-  protected readonly title = signal('wixblog');
-  constructor(private authService: AuthService) {}
+export class App implements OnInit {
+  menuVisible = true;
+  isMobile = false;
+  sidebarVisible: boolean= false;
 
-  ngOnInit() {
-    this.authService.checkAuthStatus();
+  constructor() {
+    this.onResize();
+  }
+
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event?: any) {
+    this.isMobile = globalThis.window.innerWidth < 1024;
+    if (this.isMobile) {
+      this.menuVisible = false;
+    } else {
+      this.menuVisible = true;
+    }
+  }
+
+  toggleMenu() {
+    this.menuVisible = !this.menuVisible;
+  }
+
+  onMainScroll(event: any) {
+    const scrollTop = event.target.scrollTop;
+    this.sidebarVisible = scrollTop > 100; // Show sidebar after scrolling 100px
+  }
+  ngOnInit(): void {
   }
 }
