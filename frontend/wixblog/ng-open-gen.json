@@ -1,0 +1,7 @@
+{
+  "input": "ApiGenerator/openapi.json",
+  "output": "./src/app/shared/services",
+  "generateModels": true,
+  "generateServices": true,
+  "serviceSuffix": "Service"
+}
