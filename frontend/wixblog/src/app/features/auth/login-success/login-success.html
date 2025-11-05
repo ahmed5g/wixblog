@@ -1,0 +1,10 @@
+<div class="success-container">
+  <div class="success-card">
+    <h2>Login Successful!</h2>
+    <p>{{ statusMessage }}</p>
+    <div *ngIf="isLoading" class="spinner"></div>
+    <button *ngIf="!isLoading" (click)="retry()" class="retry-btn">
+      Retry
+    </button>
+  </div>
+</div>
