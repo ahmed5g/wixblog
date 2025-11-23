@@ -1,6 +1,6 @@
 package com.tech.wixblog.repositories;
 
-import com.tech.wixblog.models.User;
+import com.tech.wixblog.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,9 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 
-    // Search users by name, email, or bio
+    // Search users by firstName , lastName, email, or bio
     @Query("SELECT u FROM User u WHERE " +
-            "LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(u.bio) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<User> searchUsers(@Param("query") String query, Pageable pageable);

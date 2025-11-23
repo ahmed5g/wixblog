@@ -1,6 +1,6 @@
 package com.tech.wixblog.dto;
 
-import com.tech.wixblog.models.PostStatus;
+import com.tech.wixblog.model.PostStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

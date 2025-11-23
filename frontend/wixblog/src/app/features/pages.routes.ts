@@ -4,6 +4,7 @@ import {About} from './util/about';
 import {PrivacyPolicy} from './util/privacy-policy';
 import {Contact} from './util/contact';
 import {PostDetails} from './post/post-details';
+import {Profile} from './user/profile';
 
 
 
@@ -21,4 +22,6 @@ export const Pages: Routes = [
     path: "contact", component: Contact
   },
   {path: "about", component: About},
+
+  {path: "profile/:provider", component: Profile},
 ]

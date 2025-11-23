@@ -1,6 +1,6 @@
 package com.tech.wixblog.dto;
 
-import com.tech.wixblog.models.PostStatus;
+import com.tech.wixblog.model.PostStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;

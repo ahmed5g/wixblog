@@ -1,4 +1,4 @@
-package com.tech.wixblog.models;
+package com.tech.wixblog.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,12 +23,24 @@ public class User  {
 
 
     //User Infos
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password")
+    private String password;
+
+
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
+
+
+
+    @Column(name = "profile_picture")
     private String profilePicture;
 
 
@@ -140,6 +152,16 @@ public class User  {
     @Column(name = "show_online_status")
     private Boolean showOnlineStatus = true;
 
+    @Column(name = "mail_sent")
+    private Boolean mailSent;
+
+
+
+
+
+    public boolean hasPassword() {
+        return password != null && !password.trim().isEmpty();
+    }
 
 
     @PrePersist
@@ -155,6 +177,10 @@ public class User  {
         }
         if (this.lastActivityAt == null) {
             this.lastActivityAt = LocalDateTime.now();
+        }
+
+        if (this.role == null) {
+            this.role = Role.ROLE_USER;
         }
     }
 

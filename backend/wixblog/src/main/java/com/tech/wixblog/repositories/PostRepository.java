@@ -1,8 +1,8 @@
 package com.tech.wixblog.repositories;
 
-import com.tech.wixblog.models.Post;
-import com.tech.wixblog.models.PostStatus;
-import com.tech.wixblog.models.User;
+import com.tech.wixblog.model.Post;
+import com.tech.wixblog.model.PostStatus;
+import com.tech.wixblog.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
