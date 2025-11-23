@@ -2,12 +2,12 @@ package com.tech.wixblog.controllers;
 
 import com.tech.wixblog.dto.payload.UserResponse;
 import com.tech.wixblog.mapper.UserMapper;
+import com.tech.wixblog.security.CurrentUser;
 import com.tech.wixblog.security.UserPrincipal;
 import com.tech.wixblog.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.tech.wixblog.config.CurrentUser;
 
 @RestController
 @RequestMapping("/user")
@@ -73,7 +73,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser (@CurrentUser
-                                                        UserPrincipal userPrincipal) {
+            UserPrincipal userPrincipal) {
         return ResponseEntity.ok(userService.getUserInfoById(userPrincipal.getId()));
     }
 
