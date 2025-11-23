@@ -2,9 +2,12 @@ import { Routes } from '@angular/router';
 import { Layout } from './layout/components/layout';
 import { NotFound } from './features/util/not-found';
 import {Landing} from './features/landing';
-import {LoginForm} from './features/auth/login-form';
-import {authGuard} from './features/auth/auth-guard';
+
+
 import {GetStarted} from './features/home/get-started';
+
+import {Oauth2RedirectHandler} from './features/auth/Oauth2RedirectHandler';
+import {Login} from './features/auth/login-form';
 
 
 
@@ -21,6 +24,8 @@ export const routes: Routes = [
   },
   { path: 'auth', loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES) },
   { path: 'notfound', component: NotFound },
-  { path: 'login', component: LoginForm },
+
+  { path: 'oauth2/:provider/redirect', component: Oauth2RedirectHandler },
+  { path: 'login', component: Login },
   { path: '**', redirectTo: '/notfound' }
 ];

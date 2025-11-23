@@ -3,7 +3,7 @@ package com.tech.wixblog.mapper;
 import com.tech.wixblog.dto.AuthResponseDTO;
 
 import com.tech.wixblog.dto.UserDTO;
-import com.tech.wixblog.models.User;
+import com.tech.wixblog.model.User;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,7 +23,7 @@ public interface UserMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "email", target = "email")
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "firstName", target = "name")
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "role", target = "role")
     @Mapping(source = "createdAt", target = "createdAt")
@@ -40,7 +40,7 @@ public interface UserMapper {
         return AuthResponseDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .name(user.getName())
+                .name(user.getFirstName())
                 .profilePicture(user.getProfilePicture())
                 .role(user.getRole().name())
                 .authenticated(authenticated)

@@ -5,9 +5,9 @@ import com.tech.wixblog.dto.LikeDTO;
 import com.tech.wixblog.dto.UserDTO;
 import com.tech.wixblog.mapper.LikeMapper;
 import com.tech.wixblog.mapper.UserMapper;
-import com.tech.wixblog.models.Like;
-import com.tech.wixblog.models.Post;
-import com.tech.wixblog.models.User;
+import com.tech.wixblog.model.Like;
+import com.tech.wixblog.model.Post;
+import com.tech.wixblog.model.User;
 import com.tech.wixblog.repositories.LikeRepository;
 import com.tech.wixblog.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

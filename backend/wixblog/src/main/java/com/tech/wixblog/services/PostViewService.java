@@ -2,8 +2,8 @@ package com.tech.wixblog.services;
 
 import com.tech.wixblog.dto.PostViewDTO;
 import com.tech.wixblog.mapper.PostViewMapper;
-import com.tech.wixblog.models.PostView;
-import com.tech.wixblog.models.User;
+import com.tech.wixblog.model.PostView;
+import com.tech.wixblog.model.User;
 import com.tech.wixblog.repositories.PostRepository;
 import com.tech.wixblog.repositories.PostViewRepository;
 import jakarta.servlet.http.HttpServletRequest;

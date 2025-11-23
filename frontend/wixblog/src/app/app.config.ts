@@ -6,11 +6,10 @@ import { routes } from './app.routes';
 
 import { HttpInterceptorFn } from '@angular/common/http';
 import {provideClientHydration} from '@angular/platform-browser';
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import {authenticationInterceptor} from './features/auth/authentication-interceptor';
 
-export const withCredentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  const cloned = req.clone({ withCredentials: true });
-  return next(cloned);
-};
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,11 +18,13 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(QuillModule.forRoot()),
     provideClientHydration(),
 
+    provideAnimationsAsync(),
+
 
     provideHttpClient(
       withFetch(),
 
-      withInterceptors([withCredentialsInterceptor])
+      withInterceptors([authenticationInterceptor])
     )
   ]
 };

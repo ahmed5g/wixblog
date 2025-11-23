@@ -1,4 +1,4 @@
-package com.tech.wixblog.models;
+package com.tech.wixblog.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

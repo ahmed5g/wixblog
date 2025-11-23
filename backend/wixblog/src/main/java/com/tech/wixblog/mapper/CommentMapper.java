@@ -3,7 +3,7 @@ package com.tech.wixblog.mapper;
 
 import com.tech.wixblog.dto.CommentDTO;
 import com.tech.wixblog.dto.CreateCommentDTO;
-import com.tech.wixblog.models.Comment;
+import com.tech.wixblog.model.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -24,7 +24,7 @@ public interface CommentMapper {
     @Mapping(target = "postId", source = "post.id")
     @Mapping(target = "postTitle", source = "post.title")
     @Mapping(target = "authorId", source = "author.id")
-    @Mapping(target = "authorName", source = "author.name")
+    @Mapping(target = "authorName", source = "author.firstName")
     @Mapping(target = "authorProfilePicture", source = "author.profilePicture")
     @Mapping(target = "parentCommentId", source = "parentComment.id")
     @Mapping(target = "replies", ignore = true)

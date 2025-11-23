@@ -1,36 +1,29 @@
 package com.tech.wixblog.controllers;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.tech.wixblog.dto.AuthResponseDTO;
+
+import com.tech.wixblog.dto.payload.LoginRequest;
 import com.tech.wixblog.mapper.UserMapper;
-import com.tech.wixblog.models.User;
 import com.tech.wixblog.services.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -40,28 +33,35 @@ import java.util.Map;
 public class AuthController {
     private final UserService userService;
     private final UserMapper userMapper;
+    private final AuthenticationManager authenticationManager;
+
+
+//    private final AuthenticationManager authenticationManager;
+//    private final TokenProvider tokenProvider;
+//
+
 
 //    @Value("${spring.security.oauth2.client.registration.google.client-id}")
 //    private String googleClientId;
 //
 
-    @Operation(summary = "Get current user",
-               description = "Returns the currently authenticated user details")
-    @GetMapping("/user")
-    public ResponseEntity<AuthResponseDTO> getCurrentUser(@AuthenticationPrincipal OAuth2User principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User currentUser = userService.extractUserFromOAuth2User(principal);
-        User user = userService.findOrCreateUser(
-                currentUser.getEmail(),
-                currentUser.getName(),
-                currentUser.getProfilePicture()
-                                                );
-        AuthResponseDTO response = userMapper.userToAuthResponseDTO(user);
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(summary = "Get current user",
+//               description = "Returns the currently authenticated user details")
+//    @GetMapping("/user")
+//    public ResponseEntity<AuthResponseDTO> getCurrentUser(@AuthenticationPrincipal OAuth2User principal) {
+//        if (principal == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        User currentUser = userService.extractUserFromOAuth2User(principal);
+//        User user = userService.findOrCreateUser(
+//                currentUser.getEmail(),
+//                currentUser.getName(),
+//                currentUser.getProfilePicture()
+//                                                );
+//        AuthResponseDTO response = userMapper.userToAuthResponseDTO(user);
+//        return ResponseEntity.ok(response);
+//    }
 
 
 //    @PostMapping("/google-login")
@@ -118,4 +118,25 @@ public class AuthController {
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
     }
+
+
+//    @PostMapping("/signin")
+//    public ResponseEntity<?> authenticateUser (@Valid @RequestBody LoginRequest loginRequest) {
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        String jwt = tokenProvider.createToken(authentication);
+//        LocalUser localUser = (LocalUser) authentication.getPrincipal();
+//        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, GeneralUtils.buildUserInfo(localUser)));
+//    }
+//
+//    @PostMapping("/signup")
+//    public ResponseEntity<?> registerUser (@Valid @RequestBody SignUpRequest signUpRequest) {
+//        try {
+//            userService.registerNewUser(signUpRequest);
+//        } catch (UserAlreadyExistAuthenticationException e) {
+//            log.error("Exception Ocurred", e);
+//            return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"), HttpStatus.BAD_REQUEST);
+//        }
+//        return ResponseEntity.ok().body(new ApiResponse(true, "User registered successfully"));
+//    }
 }

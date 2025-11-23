@@ -1,121 +1,98 @@
 package com.tech.wixblog.config;
 
-import com.tech.wixblog.services.UserService;
+import com.tech.wixblog.security.TokenAuthenticationFilter;
+import com.tech.wixblog.security.oauth2.*;
+import com.tech.wixblog.security.oauth2.user.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.endpoint.*;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
+
+    private final static String OAUTH2_BASE_URI = "/oauth2/authorize";
+    private final static String OAUTH2_REDIRECTION_ENDPOINT = "/oauth2/callback/*";
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final HttpCookieOauth2AuthorizationRequestRepository httpCookieOauth2AuthorizationRequestRepository;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
-    public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
-        http
-                // REMOVED CORS configuration - handled by WebConfig
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session
-                                           .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                                           .maximumSessions(1)
-                                           .expiredUrl("http://localhost:4200/login")
-                                  )
-                .authorizeHttpRequests(authz -> authz
-                                               .requestMatchers(
-                                                       "/swagger-ui.html",
-                                                       "/swagger-ui/**",
-                                                       "/v3/api-docs/**",
-                                                       "/swagger-resources/**",
-                                                       "/swagger-resources",
-                                                       "/configuration/ui",
-                                                       "/configuration/security",
-                                                       "/webjars/**",
-                                                       "/favicon.ico",
-                                                       "/error",
-                                                       "/api/debug/**"  // Added debug endpoints
-                                                               ).permitAll()
-                                               // ===== AUTH ENDPOINTS =====
-                                               .requestMatchers("/auth/**").permitAll()
-                                               .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                               .requestMatchers(
-                                                       "/oauth2/**",
-                                                       "/login/oauth2/**",
-                                                       "/login/**",
-                                                       "/auth/google-login",
-                                                       "auth/user"
-                                                               ).permitAll()
+    public HttpCookieOauth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
+        return new HttpCookieOauth2AuthorizationRequestRepository();
+    }
 
-                                               // ===== PUBLIC API ENDPOINTS =====
-                                               .requestMatchers(HttpMethod.GET,
-                                                                "/api/posts/**", "/api/posts/*/comments",
-                                                                "/api/posts/*/likes/*",
-                                                                "/api/posts/*/views/count",
-                                                                "/api/users/search",
-                                                                "/api/users/top-writers"
-                                                               ).permitAll()
-                                               .requestMatchers(HttpMethod.DELETE, "api/posts" +
-                                                       "/*/comments/*").permitAll()
-                                               .requestMatchers(HttpMethod.DELETE,
-                                                                "api/posts/*/likes").permitAll()
-                                               // ===== USER ENDPOINTS =====
-                                               .requestMatchers(HttpMethod.POST, "/api/posts/**").hasAnyRole("USER",
-                                                                                                             "ADMIN")
-                                               .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasAnyRole("USER",
-                                                                                                            "ADMIN")
-                                               .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasAnyRole(
-                                                       "USER,ADMIN")
-                                               .requestMatchers("/api/posts/*/likes/**").hasAnyRole("USER", "ADMIN")
-                                               .requestMatchers("/api/posts/*/comments/**").hasAnyRole("USER",
-                                                                                                              "ADMIN")
-                                               .requestMatchers("/api/posts/my-posts/**").hasAnyRole("USER", "ADMIN")
-                                               .requestMatchers("/api/posts/*/views/has-viewed").hasAnyRole(
-                                                       "USER, ",
-                                                       "ADMIN")
-                                               .requestMatchers("/api/users/my-profile").hasAnyRole("USER", "ADMIN")
-                                               .requestMatchers("/api/users/profile").hasAnyRole("USER", "ADMIN")
-                                               .requestMatchers("/api/users/settings").hasAnyRole("USER", "ADMIN").
-                                               requestMatchers("/api/users/update-user-stats").hasAnyRole("USER", "ADMIN")
-                                               // ===== ADMIN ENDPOINTS =====
-                                               .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                               .requestMatchers(HttpMethod.GET, "/api/posts" +
-                                                       "/*/views").hasRole(
-                                                       "ADMIN")
-                                               .anyRequest().authenticated()
-                                      )
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(Customizer.withDefaults());
+        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.formLogin(AbstractHttpConfigurer::disable);
+        http.httpBasic(AbstractHttpConfigurer::disable);
+
+        http.authorizeHttpRequests(
+                auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/token/refresh/**").permitAll()
+                        .requestMatchers("/", "/error").permitAll()
+                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .anyRequest()
+                        .authenticated()
+                                  );
+
+        http
                 .oauth2Login(oauth2 -> oauth2
-                                     .userInfoEndpoint(userInfo -> userInfo
-                                                               .userService(userService)
-                                                      )
-                                     .successHandler((request, response, authentication) -> {
-                                         // Check if request came from Swagger UI
-                                         String referer = request.getHeader("Referer");
-                                         if (referer != null && referer.contains("/swagger-ui")) {
-                                             response.sendRedirect("/swagger-ui/index.html");
-                                         } else {
-                                             response.sendRedirect("http://localhost:4200/");
-                                         }
-                                     })
-                            )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:4200")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                       );
+                                     .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
+                                                                    .baseUri(OAUTH2_BASE_URI)
+                                                                    .authorizationRequestRepository(httpCookieOauth2AuthorizationRequestRepository)
+                                                                    .authorizationRequestResolver(new CustomAuthorizationRequestResolver(
+                                                                            clientRegistrationRepository,
+                                                                            OAUTH2_BASE_URI))
+                                                           )
+                                     .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri(OAUTH2_REDIRECTION_ENDPOINT))
+                                     .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
+                                     .successHandler(oAuth2AuthenticationSuccessHandler)
+                                     .failureHandler(oAuth2AuthenticationFailureHandler)
+                            );
+
+        http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
+
     @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler () {
-        return new SimpleUrlAuthenticationSuccessHandler("http://localhost:4200");
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }

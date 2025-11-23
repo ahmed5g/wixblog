@@ -4,11 +4,10 @@ package com.tech.wixblog.mapper;
 import com.tech.wixblog.dto.CreatePostDTO;
 import com.tech.wixblog.dto.PostDTO;
 import com.tech.wixblog.dto.UpdatePostDTO;
-import com.tech.wixblog.models.Post;
+import com.tech.wixblog.model.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public interface PostMapper {
     Post toEntity(CreatePostDTO createPostDTO);
     
     @Mapping(target = "authorId", source = "author.id")
-    @Mapping(target = "authorName", source = "author.name")
+    @Mapping(target = "authorName", source = "author.firstName")
     @Mapping(target = "authorProfilePicture", source = "author.profilePicture")
     @Mapping(target = "LikedByCurrentUser", ignore = true)
     @Mapping(target = "ViewedByCurrentUser", ignore = true)
