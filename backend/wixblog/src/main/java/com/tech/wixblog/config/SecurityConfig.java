@@ -34,7 +34,6 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final HttpCookieOauth2AuthorizationRequestRepository httpCookieOauth2AuthorizationRequestRepository;
-
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final ClientRegistrationRepository clientRegistrationRepository;
 
@@ -57,7 +56,9 @@ public class SecurityConfig {
                         .requestMatchers("/token/refresh/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest()
+                        .authenticated()
+                                  );
 
         http
                 .oauth2Login(oauth2 -> oauth2

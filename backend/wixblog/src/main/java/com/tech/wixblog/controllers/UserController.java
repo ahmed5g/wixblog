@@ -1,107 +1,81 @@
 package com.tech.wixblog.controllers;
 
-import com.tech.wixblog.dto.payload.UserStatsResponse;
-import com.tech.wixblog.dto.payload.RegisterRequest;
-import com.tech.wixblog.dto.payload.UpdateUserRequest;
 import com.tech.wixblog.dto.payload.UserResponse;
-import com.tech.wixblog.model.Role;
-import com.tech.wixblog.security.CurrentUser;
+import com.tech.wixblog.mapper.UserMapper;
 import com.tech.wixblog.security.UserPrincipal;
 import com.tech.wixblog.services.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import com.tech.wixblog.config.CurrentUser;
 
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<?> createUser (
-            @Valid @RequestBody RegisterRequest request,
-            @CurrentUser UserPrincipal currentUser) {
-        if (currentUser != null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of(
-                            "error", "already_authenticated",
-                            "message",
-                            "Cannot register new account while already logged in as: " + currentUser.getEmail()
-                                ));
-        }
-        UserResponse userDTO = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
-    }
+    private final UserMapper userMapper;
+//    @GetMapping("/my-profile")
+//    public ResponseEntity<UserDTO> getMyProfile (@AuthenticationPrincipal OAuth2User principal) {
+//        User currentUser = userService.extractUserFromOAuth2User(principal);
+//        Optional<UserDTO> userProfile = userService.getUserProfile(currentUser.getId(), currentUser);
+//        return userProfile.map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+//
+//    @PutMapping("/profile")
+//    public ResponseEntity<UserDTO> updateMyProfile (
+//            @Valid @RequestBody UpdateProfileDTO updateProfileDTO,
+//            @AuthenticationPrincipal OAuth2User principal) {
+//        User currentUser = userService.extractUserFromOAuth2User(principal);
+//        Optional<UserDTO> updatedProfile = userService.updateUserProfile(
+//                //
+//                currentUser.getId(), updateProfileDTO, currentUser);
+//        return updatedProfile.map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+//
+//    @PutMapping("/settings")
+//    public ResponseEntity<UserDTO> updateMySettings (
+//            @Valid @RequestBody UpdateSettingsDTO updateSettingsDTO,
+//            @AuthenticationPrincipal OAuth2User principal) {
+//        User currentUser = userService.extractUserFromOAuth2User(principal);
+//        Optional<UserDTO> updatedSettings = userService.updateUserSettings(
+//                currentUser.getId(), updateSettingsDTO, currentUser);
+//        return updatedSettings.map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+//
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<UserDTO>> searchUsers (
+//            @RequestParam String query,
+//            @ParameterObject Pageable pageable) {
+//        Page<UserDTO> users = userService.searchUsers(query, pageable);
+//        return ResponseEntity.ok(users);
+//    }
+//
+//    @GetMapping("/top-writers")
+//    public ResponseEntity<Page<UserDTO>> getTopWriters (
+//            @ParameterObject Pageable pageable) {
+//        Page<UserDTO> users = userService.getTopWriters(pageable);
+//        return ResponseEntity.ok(users);
+//    }
+//
+//
+//
+//    @PostMapping("/update-user-stats")
+//    public ResponseEntity<UserDTO> getUpdatedStats (@AuthenticationPrincipal OAuth2User principal,
+//                                                    @RequestBody @Valid UpdateProfileStatsDTO updateProfileStats) {
+//        User currentUser = userService.extractUserFromOAuth2User(principal);
+//        userService.updateUserStats(currentUser, updateProfileStats);
+//        return ResponseEntity.ok(userMapper.userToUserDTO(currentUser));
+//    }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser (@CurrentUser UserPrincipal userPrincipal) {
-        UserResponse userResponse = userService.getCurrentUserInfo(userPrincipal.getId());
-        return ResponseEntity.ok(userResponse);
+    public ResponseEntity<UserResponse> getCurrentUser (@CurrentUser
+                                                        UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(userService.getUserInfoById(userPrincipal.getId()));
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers () {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById (@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserResponse> getUserByEmail (@PathVariable String email) {
-        return ResponseEntity.ok(userService.getUserByEmail(email));
-    }
-
-    @GetMapping("/role/{role}")
-    public ResponseEntity<List<UserResponse>> getUsersByRole (@PathVariable Role role) {
-        return ResponseEntity.ok(userService.getUsersByRole(role));
-    }
-
-    //todo change to get connected users
-    @GetMapping("/active")
-    public ResponseEntity<List<UserResponse>> getActiveUsers () {
-        return ResponseEntity.ok(userService.getActiveUsers());
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<UserResponse>> searchUsers (@RequestParam String q) {
-        return ResponseEntity.ok(userService.searchUsers(q));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser (
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateUserRequest request) {
-        return ResponseEntity.ok(userService.updateUser(id, request));
-    }
-
-    @PatchMapping("/{id}/role")
-    public ResponseEntity<UserResponse> updateUserRole (
-            @PathVariable Long id,
-            @RequestParam Role role) {
-        return ResponseEntity.ok(userService.updateUserRole(id, role));
-    }
-
-
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User has been deleted successfully");
-    }
-
-
-     @GetMapping("/statistics")
-    public ResponseEntity<UserStatsResponse> getUserStatistics () {
-        return ResponseEntity.ok(userService.getUserStatistics());
-    }
 
 }

@@ -1,18 +1,25 @@
 package com.tech.wixblog.controllers;
 
+
+import com.tech.wixblog.dto.payload.LoginRequest;
 import com.tech.wixblog.mapper.UserMapper;
-import com.tech.wixblog.security.CustomUserDetailsService;
 import com.tech.wixblog.services.UserService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +34,6 @@ public class AuthController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService customUserDetailsService;
 
 
 //    private final AuthenticationManager authenticationManager;
@@ -112,9 +118,6 @@ public class AuthController {
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
     }
-
-
-
 
 
 //    @PostMapping("/signin")
