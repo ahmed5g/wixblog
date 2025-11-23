@@ -50,8 +50,8 @@ public class UserService extends DefaultOAuth2UserService {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setEmail(user.getEmail());
-        userResponse.setFirstname(user.getFirstName());
-        userResponse.setLastname(user.getLastName());
+        userResponse.setName(user.getName());
+        userResponse.setImageUrl(user.getProfilePicture());
         return userResponse;
     }
 

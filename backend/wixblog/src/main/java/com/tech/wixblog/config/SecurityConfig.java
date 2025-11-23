@@ -60,9 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/token/refresh/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .anyRequest()
-                        .authenticated()
-                                  );
+                        .anyRequest().authenticated());
 
         http
                 .oauth2Login(oauth2 -> oauth2
