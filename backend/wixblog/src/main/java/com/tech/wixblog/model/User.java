@@ -40,7 +40,7 @@ public class User  {
 
 
 
-    @Column(name = "profile_picture")
+
     private String profilePicture;
 
 
@@ -115,6 +115,10 @@ public class User  {
     @Column(name = "job_title")
     private String jobTitle;
 
+    // OAuth account (nullable for LOCAL users)
+    @Embedded
+    private OAuthAccount oauth;
+
     // Analytics fields
     @Column(name = "total_posts")
     private Long totalPosts = 0L;
@@ -161,6 +165,17 @@ public class User  {
 
     public boolean hasPassword() {
         return password != null && !password.trim().isEmpty();
+    }
+
+    // Domain behavior
+    public void changeOAuthAccount(OAuthAccount newAccount) {
+        if (newAccount == null) {
+            // clearing oauth: becomes LOCAL
+            this.oauth = null;
+            return;
+        }
+        newAccount.validate();
+        this.oauth = newAccount;
     }
 
 

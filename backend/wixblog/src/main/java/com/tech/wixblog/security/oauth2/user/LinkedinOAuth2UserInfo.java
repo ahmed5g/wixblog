@@ -27,4 +27,14 @@ public class LinkedinOAuth2UserInfo extends OAuth2UserInfo {
     public String getImageUrl() {
         return (String) attributes.get("picture");
     }
+
+    @Override
+    public String getFirstName () {
+        return "";
+    }
+
+    @Override
+    public String getLastName () {
+        return "";
+    }
 }
