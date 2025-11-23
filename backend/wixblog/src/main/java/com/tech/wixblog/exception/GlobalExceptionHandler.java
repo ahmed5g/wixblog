@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handleBadRequestException(BadRequestException ex) {
@@ -46,5 +46,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Internal server error: ", ex);
         return ResponseEntity.internalServerError().build();
     }
-
 }
