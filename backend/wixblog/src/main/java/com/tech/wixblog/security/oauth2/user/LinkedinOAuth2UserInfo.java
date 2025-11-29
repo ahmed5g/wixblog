@@ -43,4 +43,14 @@ public class LinkedinOAuth2UserInfo extends OAuth2UserInfo {
     public String getLastName() {
         return (String) attributes.get("family_name");
     }
+
+    @Override
+    public String getFirstName () {
+        return "";
+    }
+
+    @Override
+    public String getLastName () {
+        return "";
+    }
 }
