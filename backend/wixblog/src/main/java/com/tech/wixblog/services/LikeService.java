@@ -1,8 +1,7 @@
 package com.tech.wixblog.services;
 
-
 import com.tech.wixblog.dto.LikeDTO;
-import com.tech.wixblog.dto.UserDTO;
+import com.tech.wixblog.dto.payload.UserResponse;
 import com.tech.wixblog.mapper.LikeMapper;
 import com.tech.wixblog.mapper.UserMapper;
 import com.tech.wixblog.model.Like;
@@ -81,10 +80,10 @@ public class LikeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserDTO> getUsersWhoLikedPost (Long postId, Pageable pageable) {
+    public Page<UserResponse> getUsersWhoLikedPost (Long postId, Pageable pageable) {
         return postRepository.findById(postId)
                 .map(post -> likeRepository.findUsersByPost(post, pageable)
-                        .map(userMapper::userToUserDTO))
+                        .map(userMapper::userToUserResponse))
                 .orElse(Page.empty(pageable));
     }
     

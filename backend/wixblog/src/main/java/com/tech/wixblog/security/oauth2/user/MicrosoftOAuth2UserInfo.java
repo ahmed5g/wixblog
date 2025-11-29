@@ -2,9 +2,8 @@ package com.tech.wixblog.security.oauth2.user;
 
 import java.util.Map;
 
-public class TwitterOAuth2UserInfo extends OAuth2UserInfo {
-
-    public TwitterOAuth2UserInfo(Map<String, Object> attributes) {
+public class MicrosoftOAuth2UserInfo extends OAuth2UserInfo {
+    public MicrosoftOAuth2UserInfo (Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -25,25 +24,25 @@ public class TwitterOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getImageUrl() {
-        return (String) attributes.get("picture");
+        return null; // Microsoft doesn't provide profile picture in basic scope
     }
 
     @Override
     public String getFirstName() {
-        String name = getName();
-        if (name != null && name.contains(" ")) {
-            return name.split(" ")[0];
-        }
-        return name;
+        return (String) attributes.get("given_name");
     }
 
     @Override
     public String getLastName() {
-        String name = getName();
-        if (name != null && name.contains(" ")) {
-            String[] parts = name.split(" ");
-            return parts[parts.length - 1];
-        }
-        return "";
+        return (String) attributes.get("family_name");
+    }
+    
+    // Microsoft specific fields
+    public String getJobTitle() {
+        return (String) attributes.get("jobTitle");
+    }
+    
+    public String getOfficeLocation() {
+        return (String) attributes.get("officeLocation");
     }
 }
