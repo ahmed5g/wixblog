@@ -1,20 +1,31 @@
-package com.tech.wixblog.dto;
+package com.tech.wixblog.dto.payload;
 
+import com.tech.wixblog.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// Update Settings DTO
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateSettingsDTO {
+public class UpdateUserRequest  {
+    
+    private String name;
+    private String firstName;
+    private String lastName;
+    private String profilePicture;
+    private String bio;
+    private Role role;
+    private Boolean enabled;
+    
+
+    
+    // Settings
     private Boolean emailNotifications;
     private Boolean commentNotifications;
     private Boolean likeNotifications;
     private Boolean newsletterSubscribed;
-    private Boolean publicProfile;
     private Boolean showOnlineStatus;
 }

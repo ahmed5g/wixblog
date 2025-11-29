@@ -29,12 +29,21 @@ public class TwitterOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getFirstName () {
-        return "";
+    public String getFirstName() {
+        String name = getName();
+        if (name != null && name.contains(" ")) {
+            return name.split(" ")[0];
+        }
+        return name;
     }
 
     @Override
-    public String getLastName () {
+    public String getLastName() {
+        String name = getName();
+        if (name != null && name.contains(" ")) {
+            String[] parts = name.split(" ");
+            return parts[parts.length - 1];
+        }
         return "";
     }
 }
