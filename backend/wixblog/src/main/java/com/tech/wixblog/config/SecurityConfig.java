@@ -34,6 +34,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final HttpCookieOauth2AuthorizationRequestRepository httpCookieOauth2AuthorizationRequestRepository;
+
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final ClientRegistrationRepository clientRegistrationRepository;
 

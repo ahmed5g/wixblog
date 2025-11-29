@@ -23,14 +23,7 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getImageUrl() {
-        String picture = (String) attributes.get("picture");
-        System.out.println("DEBUG: GoogleOAuth2UserInfo.getImageUrl()");
-        System.out.println("  Attributes keys: " + attributes.keySet());
-        System.out.println("  Picture attribute value: " + picture);
-        System.out.println("  Picture attribute type: " + (picture != null ? picture.getClass() : "null"));
-        return picture;
-    }
+    public String getImageUrl () {return (String) attributes.get("picture");}
 
     @Override
     public String getFirstName () {return (String) attributes.get("given_name");}

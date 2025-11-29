@@ -1,6 +1,5 @@
 package com.tech.wixblog.security;
 
-
 import com.tech.wixblog.model.User;
 import com.tech.wixblog.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,24 +11,24 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
         User user = userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User not found with email: %s.", email)));
-        
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User not found with email: %s.", email)));
         return UserPrincipal.create(user);
     }
-    
-    public UserDetails loadUserById(Long id) {
+
+    public UserDetails loadUserById (Long id) {
         User user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User not found with ID: %s.", id)));
-
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User not found with ID: %s.", id)));
         return UserPrincipal.create(user);
     }
-    
+
+
 }
