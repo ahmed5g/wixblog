@@ -2,7 +2,7 @@ package com.tech.wixblog.controllers;
 
 import com.tech.wixblog.model.User;
 import com.tech.wixblog.model.enums.AuthProvider;
-import com.tech.wixblog.repositories.UserRepository;
+import com.tech.wixblog.repository.UserRepository;
 import com.tech.wixblog.security.CurrentUser;
 import com.tech.wixblog.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,9 @@
 package com.tech.wixblog.controllers;
 
-import com.tech.wixblog.dto.payload.LoginRequest;
+import com.tech.wixblog.dto.user.LoginRequest;
 import com.tech.wixblog.security.CurrentUser;
 import com.tech.wixblog.security.UserPrincipal;
-import com.tech.wixblog.services.LoginService;
+import com.tech.wixblog.service.LoginService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

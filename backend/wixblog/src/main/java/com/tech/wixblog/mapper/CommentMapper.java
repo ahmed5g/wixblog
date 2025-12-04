@@ -1,34 +1,50 @@
 package com.tech.wixblog.mapper;
 
-
-import com.tech.wixblog.dto.CommentDTO;
-import com.tech.wixblog.dto.CreateCommentDTO;
+import com.tech.wixblog.dto.comment.CommentResponse;
+import com.tech.wixblog.dto.comment.CreateCommentRequest;
+import com.tech.wixblog.dto.comment.UpdateCommentRequest;
 import com.tech.wixblog.model.Comment;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        uses = {UserMapper.class},
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        builder = @Builder(disableBuilder = true))
 public interface CommentMapper {
-    
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", ignore = true)
+    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "parentComment", ignore = true)
+    @Mapping(target = "replies", ignore = true)
+    @Mapping(target = "likeCount", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isApproved", ignore = true)
-    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "status", expression = "java(com.tech.wixblog.model.enums.CommentStatus" +
+            ".ACTIVE)")
+    Comment toEntity (CreateCommentRequest request);
+
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "author", ignore = true)
+    @Mapping(target = "post", ignore = true)
     @Mapping(target = "parentComment", ignore = true)
-    Comment toEntity(CreateCommentDTO createCommentDTO);
-    
-    @Mapping(target = "postId", source = "post.id")
-    @Mapping(target = "postTitle", source = "post.title")
-    @Mapping(target = "authorId", source = "author.id")
-    @Mapping(target = "authorName", source = "author.firstName")
-    @Mapping(target = "authorProfilePicture", source = "author.profilePicture")
-    @Mapping(target = "parentCommentId", source = "parentComment.id")
     @Mapping(target = "replies", ignore = true)
-    CommentDTO toDTO(Comment comment);
-    
-    List<CommentDTO> toDTOList(List<Comment> comments);
+    @Mapping(target = "likeCount", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    void updateEntityFromRequest (UpdateCommentRequest request, @MappingTarget Comment comment);
+
+    @Mapping(source = "author", target = "author")
+    @Mapping(source = "post.id", target = "postId")
+    @Mapping(source = "parentComment.id", target = "parentCommentId")
+    @Mapping(target = "replies", ignore = true)
+    @Mapping(target = "replyCount", ignore = true)
+    CommentResponse toResponse (Comment comment);
+
+    List<CommentResponse> toResponseList (List<Comment> comments);
+
+
 }

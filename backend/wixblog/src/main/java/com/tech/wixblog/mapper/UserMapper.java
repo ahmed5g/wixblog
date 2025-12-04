@@ -1,8 +1,9 @@
 package com.tech.wixblog.mapper;
 
-import com.tech.wixblog.dto.payload.UpdateUserRequest;
-import com.tech.wixblog.dto.payload.RegisterRequest;
-import com.tech.wixblog.dto.payload.UserResponse;
+import com.tech.wixblog.dto.user.AuthorDto;
+import com.tech.wixblog.dto.user.RegisterRequest;
+import com.tech.wixblog.dto.user.UpdateUserRequest;
+import com.tech.wixblog.dto.user.UserResponse;
 import com.tech.wixblog.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,10 +13,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
-
     @Mapping(target = "engagementRate", expression = "java(user.getEngagementRate())")
-    UserResponse userToUserResponse(User user);
+    @Mapping(target = "linkedProviders", source = "oauthProviders")
+    UserResponse userToUserResponse (User user);
 
     List<UserResponse> usersToUsersResponse (List<User> users);
 
@@ -25,8 +25,6 @@ public interface UserMapper {
     @Mapping(target = "oauthProviders", ignore = true)
     @Mapping(target = "posts", ignore = true)
     @Mapping(target = "comments", ignore = true)
-    @Mapping(target = "likes", ignore = true)
-    @Mapping(target = "postViews", ignore = true)
     @Mapping(target = "totalPosts", constant = "0L")
     @Mapping(target = "publishedPosts", constant = "0L")
     @Mapping(target = "totalLikesReceived", constant = "0L")
@@ -39,7 +37,7 @@ public interface UserMapper {
     @Mapping(target = "publicProfile", constant = "true")
     @Mapping(target = "showOnlineStatus", constant = "true")
     @Mapping(target = "mailSent", ignore = true)
-    @Mapping(target = "role", expression = "java(com.tech.wixblog.model.Role.ROLE_USER)")
+    @Mapping(target = "role", expression = "java(com.tech.wixblog.model.enums.Role.ROLE_USER)")
     @Mapping(target = "enabled", constant = "true")
     User createRequestToUser (RegisterRequest request);
 
@@ -51,8 +49,6 @@ public interface UserMapper {
     @Mapping(target = "oauthProviders", ignore = true)
     @Mapping(target = "posts", ignore = true)
     @Mapping(target = "comments", ignore = true)
-    @Mapping(target = "likes", ignore = true)
-    @Mapping(target = "postViews", ignore = true)
     @Mapping(target = "totalPosts", ignore = true)
     @Mapping(target = "publishedPosts", ignore = true)
     @Mapping(target = "totalLikesReceived", ignore = true)
@@ -63,5 +59,7 @@ public interface UserMapper {
     @Mapping(target = "enabled", ignore = true)
     void updateUserFromRequest (UpdateUserRequest request, @MappingTarget User user);
 
+
+    AuthorDto toAuthorDto (User user);
 
 }

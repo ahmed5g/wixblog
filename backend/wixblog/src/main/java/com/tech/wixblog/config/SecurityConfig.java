@@ -16,8 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,31 +24,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final static String OAUTH2_BASE_URI = "/oauth2/authorize";
     private final static String OAUTH2_REDIRECTION_ENDPOINT = "/oauth2/callback/*";
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final HttpCookieOauth2AuthorizationRequestRepository httpCookieOauth2AuthorizationRequestRepository;
-
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
-    public HttpCookieOauth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
+    public HttpCookieOauth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository () {
         return new HttpCookieOauth2AuthorizationRequestRepository();
     }
 
     @Bean
-    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain configure (HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
-        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS));
         http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
-
         http.authorizeHttpRequests(
                 auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
@@ -58,36 +53,35 @@ public class SecurityConfig {
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated());
-
         http
                 .oauth2Login(oauth2 -> oauth2
-                                     .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
-                                                                    .baseUri(OAUTH2_BASE_URI)
-                                                                    .authorizationRequestRepository(httpCookieOauth2AuthorizationRequestRepository)
-                                                                    .authorizationRequestResolver(new CustomAuthorizationRequestResolver(
-                                                                            clientRegistrationRepository,
-                                                                            OAUTH2_BASE_URI))
+                                     .authorizationEndpoint(
+                                             authorizationEndpointConfig -> authorizationEndpointConfig
+                                                     .baseUri(OAUTH2_BASE_URI)
+                                                     .authorizationRequestRepository(
+                                                             httpCookieOauth2AuthorizationRequestRepository)
+                                                     .authorizationRequestResolver(
+                                                             new CustomAuthorizationRequestResolver(
+                                                                     clientRegistrationRepository,
+                                                                     OAUTH2_BASE_URI))
                                                            )
-                                     .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri(OAUTH2_REDIRECTION_ENDPOINT))
-                                     .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
+                                     .redirectionEndpoint(
+                                             redirectionEndpointConfig -> redirectionEndpointConfig.baseUri(
+                                                     OAUTH2_REDIRECTION_ENDPOINT))
+                                     .userInfoEndpoint(
+                                             userInfoEndpointConfig -> userInfoEndpointConfig.userService(
+                                                     customOAuth2UserService))
                                      .successHandler(oAuth2AuthenticationSuccessHandler)
                                      .failureHandler(oAuth2AuthenticationFailureHandler)
                             );
-
         http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
 }
