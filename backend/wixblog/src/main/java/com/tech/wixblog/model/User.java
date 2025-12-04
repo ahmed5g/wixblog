@@ -1,6 +1,7 @@
 package com.tech.wixblog.model;
 
 import com.tech.wixblog.model.enums.AuthProvider;
+import com.tech.wixblog.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,10 +44,6 @@ public class User extends AuditableEntity {
     private List<Post> posts = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostView> postViews = new ArrayList<>();
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
     @Column(name = "last_activity_at")
@@ -231,9 +228,7 @@ public class User extends AuditableEntity {
     private void updateLastActivity () {
         this.lastActivityAt = LocalDateTime.now();
     }
-
     // Utility methods
-
 
     public Long getEngagementRate () {
         if (this.publishedPosts == null || this.publishedPosts == 0) {
@@ -244,5 +239,7 @@ public class User extends AuditableEntity {
         return totalEngagement / this.publishedPosts;
     }
 
-
+    public boolean isAdmin () {
+        return this.role == Role.ROLE_ADMIN;
+    }
 }

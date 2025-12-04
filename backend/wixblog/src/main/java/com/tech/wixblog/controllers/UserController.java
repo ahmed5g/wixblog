@@ -1,13 +1,13 @@
 package com.tech.wixblog.controllers;
 
-import com.tech.wixblog.dto.payload.UserStatsResponse;
-import com.tech.wixblog.dto.payload.RegisterRequest;
-import com.tech.wixblog.dto.payload.UpdateUserRequest;
-import com.tech.wixblog.dto.payload.UserResponse;
-import com.tech.wixblog.model.Role;
+import com.tech.wixblog.dto.user.UserStatsResponse;
+import com.tech.wixblog.dto.user.RegisterRequest;
+import com.tech.wixblog.dto.user.UpdateUserRequest;
+import com.tech.wixblog.dto.user.UserResponse;
+import com.tech.wixblog.model.enums.Role;
 import com.tech.wixblog.security.CurrentUser;
 import com.tech.wixblog.security.UserPrincipal;
-import com.tech.wixblog.services.UserService;
+import com.tech.wixblog.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

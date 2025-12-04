@@ -1,7 +1,8 @@
 package com.tech.wixblog.config;
 
 import com.tech.wixblog.model.User;
-import com.tech.wixblog.repositories.UserRepository;
+import com.tech.wixblog.model.enums.Role;
+import com.tech.wixblog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class DataLoader implements CommandLineRunner {
             User user = new User();
             user.setEmail("ahmed.ghorbel@howa.com");
             user.setName("Ahmed Ghorbel");
+            user.setRole(Role.ROLE_ADMIN);
             user.setPassword(passwordEncoder.encode("ahmed1234"));
 
             user.setEnabled(true);

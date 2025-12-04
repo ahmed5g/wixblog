@@ -2,7 +2,7 @@ package com.tech.wixblog.controllers;
 
 import com.tech.wixblog.mapper.UserMapper;
 import com.tech.wixblog.security.CustomUserDetailsService;
-import com.tech.wixblog.services.UserService;
+import com.tech.wixblog.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

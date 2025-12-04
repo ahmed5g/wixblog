@@ -3,6 +3,7 @@ package com.tech.wixblog.security;
 import com.tech.wixblog.model.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -73,8 +74,9 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         return String.valueOf(id);
     }
 
-    public static UserPrincipal create (User user) {
-        List<GrantedAuthority> authorities = List.of(); // can be implemented later if needed
+    public static UserPrincipal create(User user) {
+
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
 
         return new UserPrincipal(
                 user.getId(),

@@ -1,6 +1,6 @@
 package com.tech.wixblog.controllers;
 
-import com.tech.wixblog.services.UserService;
+import com.tech.wixblog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

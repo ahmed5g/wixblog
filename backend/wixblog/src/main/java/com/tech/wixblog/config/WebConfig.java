@@ -10,9 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableSpringDataWebSupport(
         pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class WebConfig implements WebMvcConfigurer {
-
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings (CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
@@ -22,16 +21,17 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Swagger UI resources
+    public void addResourceHandlers (ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
                 .resourceChain(false);
-        // Webjars for Swagger
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
-        // Swagger API docs
         registry.addResourceHandler("/v3/api-docs/**")
                 .addResourceLocations("classpath:/META-INF/resources/v3/api-docs/");
+        registry.addResourceHandler("/")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/error")
+                .addResourceLocations("classpath:/META-INF/resources/");
     }
 }

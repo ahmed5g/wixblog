@@ -1,7 +1,7 @@
 package com.tech.wixblog.security;
 
 import com.tech.wixblog.model.User;
-import com.tech.wixblog.repositories.UserRepository;
+import com.tech.wixblog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
