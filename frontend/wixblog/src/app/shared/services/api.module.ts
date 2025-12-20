@@ -7,12 +7,11 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { UserControllerService } from './services/user-controller.service';
-import { CommentControllerService } from './services/comment-controller.service';
-import { AdminControllerService } from './services/admin-controller.service';
+import { PostService } from './services/post.service';
+import { CommentsService } from './services/comments.service';
+import { LoginControllerService } from './services/login-controller.service';
 import { AuthenticationService } from './services/authentication.service';
-import { PostViewControllerService } from './services/post-view-controller.service';
-import { PostControllerService } from './services/post-controller.service';
-import { LikeControllerService } from './services/like-controller.service';
+import { UserProviderControllerService } from './services/user-provider-controller.service';
 
 /**
  * Module that provides all services and configuration.
@@ -23,12 +22,11 @@ import { LikeControllerService } from './services/like-controller.service';
   declarations: [],
   providers: [
     UserControllerService,
-    CommentControllerService,
-    AdminControllerService,
+    PostService,
+    CommentsService,
+    LoginControllerService,
     AuthenticationService,
-    PostViewControllerService,
-    PostControllerService,
-    LikeControllerService,
+    UserProviderControllerService,
     ApiConfiguration
   ],
 })

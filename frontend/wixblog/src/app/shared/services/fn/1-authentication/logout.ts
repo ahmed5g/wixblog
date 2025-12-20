@@ -12,17 +12,21 @@ import { RequestBuilder } from '../../request-builder';
 export interface Logout$Params {
 }
 
-export function logout(http: HttpClient, rootUrl: string, params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function logout(http: HttpClient, rootUrl: string, params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+[key: string]: string;
+}>> {
   const rb = new RequestBuilder(rootUrl, logout.PATH, 'post');
   if (params) {
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<{
+      [key: string]: string;
+      }>;
     })
   );
 }

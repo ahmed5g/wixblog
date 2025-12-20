@@ -1,116 +1,120 @@
-import {Component, OnInit} from '@angular/core';
-import {User} from "../../../core/models/User";
-import {UserDTO} from "../../../core/models/UserDTO";
-import {AuthService} from "../../../core/auth/auth";
-import {Router, RouterLink} from "@angular/router";
-import {UserService} from "../../../features/admin/user-service";
-import {NgIf} from '@angular/common';
+// user-avatar.component.ts
+import { Component, Input, booleanAttribute, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {AuthStore} from '../../../features/auth/authStore';
+
 
 @Component({
-  selector: 'app-user-profile',
-  imports: [
-    NgIf,
-    RouterLink
-  ],
-  templateUrl: './user-avatar.html',
-  styleUrl: './user-avatar.scss',
-  standalone: true
+  selector: 'app-user-avatar',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="avatar" [class]="sizeClass">
+      @if (imageSrc && !imageError) {
+        <img
+          [src]="imageSrc"
+          [alt]="altText"
+          class="avatar-img"
+          (load)="onImageLoad()"
+          (error)="onImageError()"
+        />
+      } @else {
+        <div class="avatar-fallback">
+          {{ initials }}
+        </div>
+      }
+    </div>
+  `,
+  styles: [`
+    .avatar {
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
+    }
+
+    .avatar-xs { width: 24px; height: 24px; min-width: 24px; min-height: 24px; }
+    .avatar-sm { width: 32px; height: 32px; min-width: 32px; min-height: 32px; }
+    .avatar-md { width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+    .avatar-lg { width: 48px; height: 48px; min-width: 48px; min-height: 48px; }
+    .avatar-xl { width: 64px; height: 64px; min-width: 64px; min-height: 64px; }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .avatar-xs .avatar-fallback { font-size: 10px; }
+    .avatar-sm .avatar-fallback { font-size: 12px; }
+    .avatar-md .avatar-fallback { font-size: 14px; }
+    .avatar-lg .avatar-fallback { font-size: 16px; }
+    .avatar-xl .avatar-fallback { font-size: 18px; }
+  `]
 })
-export class UserAvatar implements OnInit{
+export class UserAvatar {
+  private auth = inject(AuthStore);
 
-  user: User | null = null;
-  isAdmin = false;
+  @Input() size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
+  @Input({ transform: booleanAttribute }) ring = false;
+  @Input({ transform: booleanAttribute }) hover = false;
+  @Input() customSrc?: string;
+  @Input() customAlt?: string;
 
-  allUsers: UserDTO[] = [];
+  imageError = false;
 
-  constructor(private authService: AuthService,
-              private router :Router,
-              private userService: UserService) {
+  get sizeClass(): string {
+    return `avatar-${this.size}`;
   }
 
-  isLoading = true;
-  ngOnInit(): void {
-    // Listen for user updates
-    this.authService.currentUserObservable$.subscribe(user => {
-      this.user = user;
-      this.isAdmin = user?.role === 'ROLE_ADMIN';
-      this.isLoading = false;
+  get imageSrc(): string | null {
+    // Use custom src if provided
+    if (this.customSrc) return this.customSrc;
 
-      // If user is admin, load all users
-      if (this.isAdmin) {
-        this.loadAllUsers();
-      }
-    });
-
-    // Check session on dashboard load
-    this.authService.checkAuthStatus();
+    // Otherwise use the user's profile picture from auth context
+    const user = this.auth.user();
+    return user?.profilePicture || null;
   }
 
-  // Load all users (admin only)
-  loadAllUsers(): void {
-    this.userService.getAllUsers().subscribe({
-      next: (users) => {
-        this.allUsers = users;
-        console.log('Loaded users:', users);
-      },
-      error: (error) => {
-        console.error('Error loading users:', error);
-      }
-    });
+  get altText(): string {
+    if (this.customAlt) return this.customAlt;
+
+    const user = this.auth.user();
+    return user?.name || 'User avatar';
   }
 
-  // ✅ ADD THESE COMPUTED PROPERTIES FOR TEMPLATE
-  get adminCount(): number {
-    return this.allUsers.filter(user => user.role === 'ROLE_ADMIN').length;
+  get initials(): string {
+    const name = this.altText;
+    if (!name || name === 'User avatar') return 'U';
+
+    const parts = name.split(' ').filter(p => p.length > 0);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    } else if (parts.length === 1) {
+      return parts[0][0].toUpperCase();
+    }
+
+    return 'U';
   }
 
-  get userCount(): number {
-    return this.allUsers.filter(user => user.role === 'ROLE_USER').length;
+  onImageLoad(): void {
+    this.imageError = false;
   }
 
-  get recentUsers(): UserDTO[] {
-    return this.allUsers.slice(0, 5);
+  onImageError(): void {
+    this.imageError = true;
   }
-
-  // Promote user to admin
-  promoteUser(userId: number): void {
-    this.userService.promoteToAdmin(userId).subscribe({
-      next: (updatedUser) => {
-        console.log('User promoted:', updatedUser);
-        this.loadAllUsers(); // Refresh the list
-        // Update current user if it's the same user
-        if (this.user?.id === userId) {
-          this.authService.checkAuthStatus(); // Refresh current user data
-        }
-      },
-      error: (error) => {
-        console.error('Error promoting user:', error);
-      }
-    });
-  }
-
-  // Demote admin to user
-  demoteUser(userId: number): void {
-    this.userService.demoteToUser(userId).subscribe({
-      next: (updatedUser) => {
-        console.log('User demoted:', updatedUser);
-        this.loadAllUsers(); // Refresh the list
-        // Update current user if it's the same user
-        if (this.user?.id === userId) {
-          this.authService.checkAuthStatus(); // Refresh current user data
-        }
-      },
-      error: (error) => {
-        console.error('Error demoting user:', error);
-      }
-    });
-  }
-
-
-
-  logout(): void {
-    this.authService.logout();
-  }
-
-
 }

@@ -18,7 +18,6 @@ import {Tag} from './tag';
       </ul>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TagWidget {
   @Input({ required: true }) tags!: Tag[];

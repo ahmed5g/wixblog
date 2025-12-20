@@ -1,271 +1,178 @@
-import {Component, OnInit} from '@angular/core';
-
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router} from "@angular/router";
-import {GOOGLE_AUTH_URL, GITHUB_AUTH_URL} from '../../../../environment';
-
-
+import {Component, inject, signal} from '@angular/core';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {AuthService} from './auth-service';
-import {ApiService} from './ApiService';
-import { AuthProvider } from "./auth-provider.enum";
-
-
+import {AuthProvider} from './auth-provider.enum';
+import {GOOGLE_AUTH_URL, GITHUB_AUTH_URL} from '../../../../environment';
+import {Router, RouterLink} from '@angular/router';
+import {UserControllerService} from '../../shared/services/services/user-controller.service';
+import {LoginControllerService} from '../../shared/services/services/login-controller.service';
+import {AuthStore} from './authStore';
+import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   template: `
+    <div class="flex min-h-screen items-center justify-center bg-white p-6 font-sans antialiased">
+      <div class="w-full max-w-[380px] flex flex-col items-center">
 
-    <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div class="w-full max-w-md space-y-8">
-        <!-- Card Container -->
-        <div class="bg-white shadow-2xl rounded-lg border border-gray-200 p-8">
+        <header class="text-center mb-10">
+          <h1 class="text-[32px] font-serif tracking-tight leading-tight text-[#242424] font-medium">
+            Welcome back.
+          </h1>
+        </header>
 
-          <!-- Header -->
-          <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold tracking-tight text-gray-900">
-              Log in to your account
-            </h2>
-            <p class="mt-2 text-sm text-gray-600">
-              Welcome back! Please sign in to continue.
+        <div class="flex items-center justify-center w-full gap-3 mb-10">
+          <button (click)="loginWith(AuthProvider.google)"
+                  class="flex items-center justify-center gap-2 px-4 py-1.5 rounded-full border border-[#e6e6e6] text-[12px] text-[#242424] transition-all hover:border-[#bdbdbd] hover:bg-[#fafafa] active:scale-[0.98]">
+            <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
+              <path fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Google</span>
+          </button>
+
+          <button (click)="loginWith(AuthProvider.github)"
+                  class="flex items-center justify-center gap-2 px-4 py-1.5 rounded-full border border-[#e6e6e6] text-[12px] text-[#242424] transition-all hover:border-[#bdbdbd] hover:bg-[#fafafa] active:scale-[0.98]">
+            <svg class="h-3.5 w-3.5 fill-[#242424] shrink-0" viewBox="0 0 24 24">
+              <path
+                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </svg>
+            <span>GitHub</span>
+          </button>
+        </div>
+
+        <div class="w-full flex items-center mb-8">
+          <div class="flex-grow border-t border-[#f2f2f2]"></div>
+          <span class="mx-3 text-[12px] text-slate-400 font-light italic">or</span>
+          <div class="flex-grow border-t border-[#f2f2f2]"></div>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full space-y-7">
+          <div class="relative group">
+            <label class="block text-[12px] font-medium text-slate-500 mb-0.5 ml-0.5">Your email</label> <input
+            id="email" formControlName="email" type="email"
+            class="w-full py-1.5 border-b border-[#e6e6e6] outline-none transition-colors focus:border-[#242424] bg-transparent text-[#242424] text-[14px]"
+            [class.border-red-500]="isInvalid('email')">
+          </div>
+
+          <div class="relative group">
+            <div class="flex justify-between items-center mb-0.5 ml-0.5">
+              <label class="block text-[12px] font-medium text-slate-500">Your password</label> <a href="#"
+                                                                                                   class="text-[11px] text-slate-400 hover:text-[#242424] transition-colors underline underline-offset-2">Forgot?</a>
+            </div>
+            <input id="password" formControlName="password" type="password"
+                   class="w-full py-1.5 border-b border-[#e6e6e6] outline-none transition-colors focus:border-[#242424] bg-transparent text-[#242424] text-[14px]"
+                   [class.border-red-500]="isInvalid('password')">
+          </div>
+
+          @if (errorMessage()) {
+            <p class="text-[12px] text-red-600 text-center italic">{{ errorMessage() }}</p>
+          }
+          @if (redirectionMessage()) {
+            <div class="alert alert-info">
+              {{ redirectionMessage() }}
+              <div class="spinner-border spinner-border-sm" role="status"></div>
+            </div>
+          }
+
+          <div class="flex flex-col items-center gap-6 pt-2">
+            <button type="submit" [disabled]="loginForm.invalid || isLoading()"
+                    class="w-[120px] py-2 rounded-full bg-[#191919] text-white text-[13.5px] font-medium hover:bg-black transition-all disabled:opacity-20 active:scale-95">
+              {{ isLoading() ? '...' : 'Continue' }}
+            </button>
+
+            <p class="text-[13px] text-[#242424]">
+              No account?
+              <button type="button" class="text-[#1a8917] font-bold hover:text-[#156d12] transition-colors ml-1"
+                      routerLink="/wrapper">Create one
+              </button>
             </p>
           </div>
+        </form>
 
-          <!-- Social Login Buttons -->
-          <div class="mb-6">
-            <div class="grid grid-cols-2 gap-3">
-              <!-- Google Login -->
-              <button
-                (click)="loginWithProvider(AuthProvider.google)"
-                type="button"
-                class="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent transition-colors duration-200">
-                <svg class="h-5 w-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Google
-              </button>
-
-              <!-- GitHub Login -->
-              <button
-                (click)="loginWithProvider(AuthProvider.github)"
-                type="button"
-                class="flex w-full items-center justify-center gap-3 rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:ring-transparent transition-colors duration-200">
-                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd"
-                        d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                        clip-rule="evenodd"/>
-                </svg>
-                GitHub
-              </button>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="relative mb-6">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="bg-white px-2 text-gray-500">Or continue with email</span>
-            </div>
-          </div>
-
-          <!-- Login Form -->
-          <form [formGroup]="loginForm" class="space-y-6">
-            <!-- Email Field -->
-            <div>
-              <label for="email" class="block text-sm font-medium leading-6 text-gray-900"> Email address </label>
-              <div class="mt-2">
-                <input
-                  id="email"
-                  formControlName="email"
-                  name="email"
-                  type="email"
-                  autocomplete="email"
-                  class="block w-full rounded-md border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-colors duration-200"
-                  placeholder="Enter your email">
-                <div *ngIf="submitted && loginForm.get('email')?.errors" class="mt-1 text-sm text-red-600">
-                  <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span> <span
-                  *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Password Field -->
-            <div>
-              <label for="password" class="block text-sm font-medium leading-6 text-gray-900"> Password </label>
-              <div class="mt-2">
-                <input
-                  id="password"
-                  formControlName="password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  class="block w-full rounded-md border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-colors duration-200"
-                  placeholder="Enter your password">
-                <div *ngIf="submitted && loginForm.get('password')?.errors" class="mt-1 text-sm text-red-600">
-                  <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Error Message -->
-            <div *ngIf="errorResponse" class="rounded-md bg-red-50 p-4">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
-                          clip-rule="evenodd"/>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-sm font-medium text-red-800">
-                    Authentication Error
-                  </h3>
-                  <div class="mt-2 text-sm text-red-700">
-                    <p>{{ errorMessage }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div>
-              <button
-                type="submit"
-                (click)="onSubmit()"
-                [disabled]="loginForm.invalid || loading"
-                class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors duration-200">
-                <span *ngIf="!loading">Log in</span> <span *ngIf="loading" class="flex items-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                   viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Signing in...
-            </span>
-              </button>
-            </div>
-          </form>
-        </div>
+        <footer class="mt-16 text-center pt-6">
+          <p class="text-[11px] leading-relaxed text-slate-400">
+            Forgot email or trouble signing in? <br> <a href="#"
+                                                        class="underline hover:text-[#242424] transition-colors">Get
+            help from support</a>.
+          </p>
+        </footer>
       </div>
     </div>
-
-  `,
-  styles: `
-    :host {
-      display: block;
-      background-color: #f9fafb;
-    }
-
-    /* Custom animations */
-    .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Focus states */
-    input:focus {
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-    }
-
-    /* Smooth transitions */
-    * {
-      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      transition-duration: 150ms;
-    }
   `
 })
-export class Login implements OnInit {
-  authProvider?: AuthProvider;
-  loginForm!: FormGroup;
-  loading = false;
-  submitted = false;
+export class Login {
+  private fb=inject(FormBuilder);
+  isLoading=signal(false);
+  errorMessage=signal<string | null>(null);
+  submitted=signal(false);
+  private loginService=inject(LoginControllerService);
+  protected readonly AuthProvider=AuthProvider;
+  protected readonly navigator=navigator;
+  private router=inject(Router);
+  private authStore=inject(AuthStore);
+  redirectionMessage = signal<string | null>(null);
 
-  errorResponse: boolean = false;
-  errorMessage: string = '';
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService,
-    private apiService: ApiService
-  ) {
+  loginForm=this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
+
+  isInvalid(controlName: string): boolean {
+    const control=this.loginForm.get(controlName);
+    return !!(this.submitted() && control?.invalid);
   }
 
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
+  loginWith(provider: AuthProvider) {
+    const urls: Partial<Record<AuthProvider, string>> ={
+      [AuthProvider.google]: GOOGLE_AUTH_URL,
+      [AuthProvider.github]: GITHUB_AUTH_URL
+    };
+    const url=urls[provider];
+    if (url) window.location.href=url;
   }
+
 
   onSubmit() {
-    this.errorResponse = false;
-    this.submitted = true;
 
-    if (this.loginForm.invalid) {
+    if (this.authStore.isAuthenticated()) {
+      this.redirectionMessage.set(`You are already connected with ${this.authStore.user()!.email} Redirecting ...`);
+
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 6000);
+
       return;
     }
-
-    this.loading = true;
-    this.apiService.login(this.loginForm.value)
-      .subscribe({
-        next: data => {
-          const token = JSON.parse(JSON.stringify(data)).accessToken;
-          if (token) {
-            this.authProvider = AuthProvider.local;
-            this.authService.setAuthentication(token);
-            this.router.navigate(['/pages', 'profile', this.authProvider], {state: {from: this.router.routerState.snapshot.url}});
-          } else {
-            this.errorResponse = true;
-            this.errorMessage = "Authentication failed.";
-          }
-        },
-        error: error => {
-          this.errorResponse = true;
-          this.errorMessage = error.error.message;
-          this.loading = false;
+    this.submitted.set(true);
+    if (this.loginForm.valid) {
+      this.isLoading.set(true);
+      this.loginService.login({
+        body: {
+          email: this.loginForm.value.email!,
+          password: this.loginForm.value.password!
         }
-      });
-  }
-
-  loginWithProvider(provider: AuthProvider) {
-    switch (provider) {
-      case AuthProvider.google:
-        window.location.href = GOOGLE_AUTH_URL;
-        break;
-      case AuthProvider.github:
-        window.location.href = GITHUB_AUTH_URL;
-        break;
-      default:
-        console.error('Unknown provider');
+      })
+        .subscribe({
+          next: (res:any) => {
+            this.authStore.setToken(res.accessToken);
+            this.router.navigate(['/']);
+          },
+          error: (err) => console.error('Login failed', err)
+        });
     }
-  }
 
-  protected readonly AuthProvider = AuthProvider;
+  }
 }
+
+
+

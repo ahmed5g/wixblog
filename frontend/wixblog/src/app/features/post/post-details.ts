@@ -2,11 +2,13 @@ import {ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, ViewChil
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { PostControllerService } from '../../shared/services/services/post-controller.service';
-import { PostDto } from '../../shared/services/models/post-dto';
+
 import { FormsModule } from '@angular/forms';
 import { CommentSection } from '../comment/comment-section';
 import { LikeWidget } from './like-widget';
+
+import {PostResponse} from '../../shared/services/models/post-response';
+import {PostService} from '../../shared/services/services/post.service';
 
 @Component({
   selector: 'app-post-details',
@@ -37,13 +39,13 @@ import { LikeWidget } from './like-widget';
               <ul class="list-inline post-meta mb-3">
                 <li class="list-inline-item">
                   <i class="ti-user mr-2"></i>
-                  {{ post.authorName || 'Unknown Author' }}
+                  {{ post.author || 'Unknown Author' }}
                 </li>
                 <li class="list-inline-item">
                   Date : {{ formatDate(post.createdAt) }}
                 </li>
-                <li class="list-inline-item" *ngIf="post.timeToRead">
-                  Reading Time : {{ post.timeToRead }} min
+                <li class="list-inline-item" *ngIf="post.readTime">
+                  Reading Time : {{ post.readTime }} min
                 </li>
                 <li class="list-inline-item" *ngIf="post.viewCount">
                   Views : {{ post.viewCount }}
@@ -107,16 +109,12 @@ import { LikeWidget } from './like-widget';
 
             <!-- Comments Section -->
             <app-comment-section
-              *ngIf="post.id && post.allowComments !== false"
+              *ngIf="post.id "
               [postId]="post.id"
               class="mt-5">
             </app-comment-section>
 
-            <!-- Comments Disabled Message -->
-            <div *ngIf="post.allowComments === false" class="alert alert-warning mt-4">
-              <i class="ti-info-alt me-2"></i>
-              Comments are disabled for this post.
-            </div>
+
           </div>
         </article>
       </div>
@@ -146,11 +144,11 @@ import { LikeWidget } from './like-widget';
 })
 export class PostDetails implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly postApi = inject(PostControllerService);
+  private readonly postApi = inject(PostService);
   private readonly sanitizer = inject(DomSanitizer);
   @ViewChild('dropdown') dropdown!: ElementRef;
 
-  post: PostDto | null = null;
+  post: PostResponse | null = null;
   isLoading = true;
   error = false;
   safeContent: SafeHtml = '';
@@ -211,7 +209,7 @@ export class PostDetails implements OnInit {
     }
   }
 
-  mapTags(p: PostDto) {
+  mapTags(p: PostResponse) {
     return (p as any).tags?.map((t: string) => ({ label: t, link: `/tag/${t}` })) ?? [];
   }
 

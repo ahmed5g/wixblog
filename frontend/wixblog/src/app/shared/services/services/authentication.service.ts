@@ -11,11 +11,12 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { AuthResponseDto } from '../models/auth-response-dto';
-import { getCurrentUser } from '../fn/1-authentication/get-current-user';
-import { GetCurrentUser$Params } from '../fn/1-authentication/get-current-user';
+import { getTokenConfig } from '../fn/1-authentication/get-token-config';
+import { GetTokenConfig$Params } from '../fn/1-authentication/get-token-config';
 import { logout } from '../fn/1-authentication/logout';
 import { Logout$Params } from '../fn/1-authentication/logout';
+import { refreshToken } from '../fn/1-authentication/refresh-token';
+import { RefreshToken$Params } from '../fn/1-authentication/refresh-token';
 
 
 /**
@@ -27,68 +28,131 @@ export class AuthenticationService extends BaseService {
     super(config, http);
   }
 
+  /** Path part for operation `refreshToken()` */
+  static readonly RefreshTokenPath = '/auth/refresh';
+
+  /**
+   * Refresh token.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `refreshToken()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  refreshToken$Response(params: RefreshToken$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+[key: string]: string;
+}>> {
+    return refreshToken(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Refresh token.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `refreshToken$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  refreshToken(params: RefreshToken$Params, context?: HttpContext): Observable<{
+[key: string]: string;
+}> {
+    return this.refreshToken$Response(params, context).pipe(
+      map((r: StrictHttpResponse<{
+[key: string]: string;
+}>): {
+[key: string]: string;
+} => r.body)
+    );
+  }
+
   /** Path part for operation `logout()` */
   static readonly LogoutPath = '/auth/logout';
 
   /**
+   * Logout user.
+   *
+   * Clears client-side authentication. Note: Short-lived tokens (30 min) will expire automatically.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `logout()` instead.
    *
    * This method doesn't expect any request body.
    */
-  logout$Response(params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  logout$Response(params?: Logout$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+[key: string]: string;
+}>> {
     return logout(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Logout user.
+   *
+   * Clears client-side authentication. Note: Short-lived tokens (30 min) will expire automatically.
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `logout$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  logout(params?: Logout$Params, context?: HttpContext): Observable<void> {
+  logout(params?: Logout$Params, context?: HttpContext): Observable<{
+[key: string]: string;
+}> {
     return this.logout$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<{
+[key: string]: string;
+}>): {
+[key: string]: string;
+} => r.body)
     );
   }
 
-  /** Path part for operation `getCurrentUser()` */
-  static readonly GetCurrentUserPath = '/auth/user';
+  /** Path part for operation `getTokenConfig()` */
+  static readonly GetTokenConfigPath = '/auth/config';
 
   /**
-   * Get current user.
+   * Get token configuration.
    *
-   * Returns the currently authenticated user details
+   *
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getCurrentUser()` instead.
+   * To access only the response body, use `getTokenConfig()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getCurrentUser$Response(params?: GetCurrentUser$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthResponseDto>> {
-    return getCurrentUser(this.http, this.rootUrl, params, context);
+  getTokenConfig$Response(params?: GetTokenConfig$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+[key: string]: {
+};
+}>> {
+    return getTokenConfig(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * Get current user.
+   * Get token configuration.
    *
-   * Returns the currently authenticated user details
+   *
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getCurrentUser$Response()` instead.
+   * To access the full response (for headers, for example), `getTokenConfig$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getCurrentUser(params?: GetCurrentUser$Params, context?: HttpContext): Observable<AuthResponseDto> {
-    return this.getCurrentUser$Response(params, context).pipe(
-      map((r: StrictHttpResponse<AuthResponseDto>): AuthResponseDto => r.body)
+  getTokenConfig(params?: GetTokenConfig$Params, context?: HttpContext): Observable<{
+[key: string]: {
+};
+}> {
+    return this.getTokenConfig$Response(params, context).pipe(
+      map((r: StrictHttpResponse<{
+[key: string]: {
+};
+}>): {
+[key: string]: {
+};
+} => r.body)
     );
-  }
-
-
-  /* ----  OAuth2 redirect  ------------------------------------ */
-  loginWithGoogle(): void {
-    window.location.href = `${this.rootUrl}/oauth2/authorization/google`;
   }
 
 }
