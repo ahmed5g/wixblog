@@ -12,3 +12,5 @@ export const GOOGLE_AUTH_URL = `${API_BASE_URL}${OAUTH2_AUTHORIZE_URI}/google?re
 
 const GITHUB_OAUTH2_REDIRECT_URI = `${UI_BASE_URL}/oauth2/github/redirect`;
 export const GITHUB_AUTH_URL = `${API_BASE_URL}${OAUTH2_AUTHORIZE_URI}/github?redirect_uri=${GITHUB_OAUTH2_REDIRECT_URI}`;
+
+export const IMAGEPROXY = `${API_BASE_URL}//api/images/profile?url=`;

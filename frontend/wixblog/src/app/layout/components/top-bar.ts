@@ -1,9 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import {Component, effect, inject, signal} from '@angular/core';
 import {CommonModule, NgIf} from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
-import {AuthState} from '../../features/auth/auth-state';
-import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avatar-with-DropDown';
+
+import {MenuAction, UserAvatarWithDropDown,} from '../../features/user/user-avatar-with-DropDown';
+import { AuthStore} from '../../features/auth/authStore';
 
 
 @Component({
@@ -51,28 +52,34 @@ import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avata
 
     <!-- Right: actions -->
     <nav class="right">
-      <!-- Write (desktop only) -->
-      <a *ngIf="user()" routerLink="/write" class="write-link hide-mobile">
-        <!-- **** PEN / WRITE ICON **** -->
-        <svg class="icon" viewBox="0 0 24 24"><!-- … --></svg>
-        <span>Write</span>
-      </a>
+      @if (authStore.isAuthenticated() && authStore.user()) {
+        <!-- Authenticated User View -->
+        <a routerLink="/write" class="write-link hide-mobile">
+          <svg class="icon" viewBox="0 0 24 24"><!-- pen icon --></svg>
+          <span>Write</span>
+        </a>
 
-      <!-- Search (mobile) -->
-      <button (click)="toggleMobileSearch()" class="search-mobile-btn hide-desktop" aria-label="Search">
-        <!-- **** MAGNIFIER ICON **** -->
-        <svg class="icon" viewBox="0 0 24 24"><!-- … --></svg>
-      </button>
+        <button (click)="toggleMobileSearch()" class="search-mobile-btn hide-desktop" aria-label="Search">
+          <svg class="icon" viewBox="0 0 24 24"><!-- … --></svg>
+        </button>
 
-<!--      &lt;!&ndash; Notifications &ndash;&gt;-->
-<!--      <button class="notifications-btn hide-mobile" aria-label="Notifications">-->
-<!--        &lt;!&ndash; **** BELL ICON **** &ndash;&gt;-->
-<!--        <svg class="icon" viewBox="0 0 24 24">&lt;!&ndash; … &ndash;&gt;</svg>-->
-<!--        <span class="badge"></span>-->
-<!--      </button>-->
+        <app-user-avatar-with-dropdown
+          size="xl"
+          [ring]="true"
+          (action)="onMenuAction($event)"/>
+      } @else {
+        <a routerLink="/auth/login" class="auth-button signin-button">
+          <span>Sign In</span>
+        </a>
 
-      <!-- User menu -->
-      <app-user-avatar-with-dropdown  size="xl"  [ring]="true" (action)="onMenuAction($event)"/>
+        <a routerLink="/register" class="auth-button signup-button">
+          <span>Sign Up</span>
+        </a>
+
+        <button (click)="toggleMobileSearch()" class="search-mobile-btn hide-desktop" aria-label="Search">
+          <svg class="icon" viewBox="0 0 24 24"><!-- … --></svg>
+        </button>
+      }
     </nav>
   </div>
 
@@ -86,8 +93,7 @@ import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avata
 </header>
   `,
   styles: `
-    :host { display: block;
-    }
+    :host { display: block; }
 
     .top-bar {
       position: sticky;
@@ -95,7 +101,6 @@ import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avata
       z-index: 50;
       background: #fff;
       border-bottom: 1px solid #e5e7eb;
-
     }
 
     .container {
@@ -160,6 +165,42 @@ import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avata
       height: 20px;
     }
 
+    /* Auth buttons styles */
+    .auth-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &.signin-button {
+        color: #4b5563;
+        background: transparent;
+        border: 1px solid #d1d5db;
+
+        &:hover {
+          background: #f9fafb;
+          border-color: #9ca3af;
+        }
+      }
+
+      &.signup-button {
+        color: white;
+        background: #2563eb;
+        border: 1px solid #2563eb;
+
+        &:hover {
+          background: #1d4ed8;
+          border-color: #1d4ed8;
+        }
+      }
+    }
+
     .write-link {
       display: inline-flex;
       align-items: center;
@@ -198,12 +239,19 @@ import {MenuAction, UserAvatarWithDropDown} from '../../features/user/user-avata
   `
 })
 export class TopBar {
-  private readonly auth = inject(AuthState);
+  // Replace AuthState with authStore
+  public readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
-  /* exposed for template */
-  readonly user = this.auth.user;
+
   mobileSearchOpen = signal(false);
+
+
+  constructor() {
+    effect(() => {
+      this.authStore.user();
+    });
+  }
 
   /* --------- handlers ---------------------------------------------------- */
   toggleMobileSearch(): void {
@@ -216,11 +264,9 @@ export class TopBar {
         this.router.navigate(['/user']);
         break;
       case 'signout':
-        this.auth.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
         break;
       default:
-        console.log('top-bar →', action);
         break;
     }
   }

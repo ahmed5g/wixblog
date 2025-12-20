@@ -5,7 +5,9 @@ import {
   Output,
   EventEmitter,
   HostBinding,
-  booleanAttribute
+  booleanAttribute,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -117,7 +119,7 @@ const SIZE_MAP: Record<Size, string> = {
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserAvatar {
+export class UserAvatar implements OnChanges {
   @Input() src?: string | null;
   @Input() alt?: string = 'User avatar';
   @Input() size: Size = 'md';
@@ -132,6 +134,13 @@ export class UserAvatar {
 
   protected isLoaded = false;
   protected showFallback = false;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Reset loading state when src changes
+    if (changes['src']) {
+      this.resetState();
+    }
+  }
 
   get sizeClass(): string {
     return SIZE_MAP[this.size];
@@ -156,5 +165,10 @@ export class UserAvatar {
     this.showFallback = true;
     this.isLoaded = true;
     this.loaded.emit(false);
+  }
+
+  private resetState(): void {
+    this.isLoaded = false;
+    this.showFallback = false;
   }
 }

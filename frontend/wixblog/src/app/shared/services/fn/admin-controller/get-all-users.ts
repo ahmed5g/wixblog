@@ -7,13 +7,14 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
+import {UserResponse} from '../../models/user-response';
 
-import { UserDto } from '../../models/user-dto';
+
 
 export interface GetAllUsers$Params {
 }
 
-export function getAllUsers(http: HttpClient, rootUrl: string, params?: GetAllUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserDto>>> {
+export function getAllUsers(http: HttpClient, rootUrl: string, params?: GetAllUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserResponse>>> {
   const rb = new RequestBuilder(rootUrl, getAllUsers.PATH, 'get');
   if (params) {
   }
@@ -23,7 +24,7 @@ export function getAllUsers(http: HttpClient, rootUrl: string, params?: GetAllUs
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<UserDto>>;
+      return r as StrictHttpResponse<Array<UserResponse>>;
     })
   );
 }

@@ -8,34 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PagedModelUserDto } from '../../models/paged-model-user-dto';
+import { UserResponse } from '../../models/user-response';
 
 export interface SearchUsers$Params {
-  query: string;
-
-/**
- * Zero-based page index (0..N)
- */
-  page?: number;
-
-/**
- * The size of the page to be returned
- */
-  size?: number;
-
-/**
- * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
- */
-  sort?: Array<string>;
+  q: string;
 }
 
-export function searchUsers(http: HttpClient, rootUrl: string, params: SearchUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<PagedModelUserDto>> {
+export function searchUsers(http: HttpClient, rootUrl: string, params: SearchUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserResponse>>> {
   const rb = new RequestBuilder(rootUrl, searchUsers.PATH, 'get');
   if (params) {
-    rb.query('query', params.query, {});
-    rb.query('page', params.page, {});
-    rb.query('size', params.size, {});
-    rb.query('sort', params.sort, {});
+    rb.query('q', params.q, {});
   }
 
   return http.request(
@@ -43,9 +25,9 @@ export function searchUsers(http: HttpClient, rootUrl: string, params: SearchUse
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PagedModelUserDto>;
+      return r as StrictHttpResponse<Array<UserResponse>>;
     })
   );
 }
 
-searchUsers.PATH = '/api/users/search';
+searchUsers.PATH = '/user/search';

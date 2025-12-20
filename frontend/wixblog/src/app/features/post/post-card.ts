@@ -22,7 +22,7 @@ import {Tag} from './tag';
 
       <div class="col-md-8">
         <h3 class="h5">
-          <a class="post-title" [routerLink]="link">{{ title }}</a>
+          <a class="post-title" [routerLink]="['/pages/post', slug]">{{ title }}</a>
         </h3>
 
         <ul class="list-inline post-meta mb-2">

@@ -5,10 +5,10 @@ import {PrivacyPolicy} from './util/privacy-policy';
 import {Contact} from './util/contact';
 import {PostDetails} from './post/post-details';
 import {Profile} from './user/profile';
+import {postUpload} from './post/post-upload';
 
 
-
-export const Pages: Routes = [
+export const Pages: Routes=[
   {
     path: "terms&conditions", component: TermsAndConditions
   },
@@ -24,4 +24,5 @@ export const Pages: Routes = [
   {path: "about", component: About},
 
   {path: "profile/:provider", component: Profile},
+
 ]

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "open-api": "ng-openapi-gen --input ./ApiGenerator/openapi.json --output ./src/app/shared/services --services true"
+    "open-api": "ng-openapi-gen --input ./ApiGenerator/openapi.json --output ./src/app/shared/service2 --services true"
   },
   "prettier": {
     "printWidth": 100,
@@ -23,13 +23,18 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "20.3.9",
-    "@angular/compiler": "20.3.9",
-    "@angular/core": "20.3.9",
-    "@angular/forms": "20.3.9",
-    "@angular/platform-browser": "20.3.9",
-    "@angular/router": "20.3.9",
+    "@angular/common": "^20.3.15",
+    "@angular/compiler": "~20.3.15",
+    "@angular/core": "~20.3.15",
+    "@angular/forms": "^20.3.15",
+    "@angular/platform-browser": "^20.3.15",
+    "@angular/router": "^20.3.15",
+    "@editorjs/editorjs": "^2.31.0",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/image": "^2.10.3",
+    "@editorjs/list": "^2.0.9",
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
+    "@ngrx/signals": "^20.1.0",
     "bootstrap": "^5.3.8",
     "gapi-script": "^1.2.0",
     "jquery": "^3.7.1",

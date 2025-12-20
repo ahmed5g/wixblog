@@ -4,7 +4,15 @@ module.exports = {
     "./src/**/*.{html,ts}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      variants: {
+        extend: {
+          cursor: ['disabled'],
+          opacity: ['disabled'],
+          backgroundColor: ['disabled', 'hover'],
+        }
+      }
+    },
   },
   plugins: [require("daisyui")],
 }

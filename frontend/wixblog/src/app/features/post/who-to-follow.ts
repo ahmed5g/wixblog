@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import {AuthorDto} from '../../shared/services/models/author-dto';
 
 export interface Author {
   name: string;
@@ -19,11 +20,11 @@ export interface Author {
       <h4 class="widget-title">Who to follow</h4>
       <ul class="list-unstyled">
         <li *ngFor="let a of authors" class="follow-item">
-          <img [src]="a.avatar" class="avatar" alt="">
+          <img [src]="a.profilePicture" class="avatar" alt="">
           <div class="info">
-            <a [routerLink]="a.link" class="name">{{ a.name }}</a>
-            <p class="bio">{{ a.bio }}</p>
-            <small>{{ a.followers | number }} followers</small>
+<!--            <a [routerLink]="a.link" class="name">{{ a.name }}</a>-->
+<!--            <p class="bio">{{ a.bio }}</p>-->
+<!--            <small>{{ a.followers | number }} followers</small>-->
           </div>
           <button class="btn-follow">Follow</button>
         </li>
@@ -43,5 +44,5 @@ export interface Author {
   `]
 })
 export class WhoToFollow {
-  @Input({ required: true }) authors!: Author[];
+  @Input({ required: true }) authors!: AuthorDto[];
 }

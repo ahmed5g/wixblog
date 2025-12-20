@@ -7,8 +7,9 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
+import {UserResponse} from '../../models/user-response';
 
-import { UserDto } from '../../models/user-dto';
+
 
 export interface UpdateUserRole$Params {
 
@@ -18,7 +19,7 @@ export interface UpdateUserRole$Params {
   userRole: 'ROLE_ADMIN' | 'ROLE_USER' | 'ROLE_GUEST';
 }
 
-export function updateUserRole(http: HttpClient, rootUrl: string, params: UpdateUserRole$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDto>> {
+export function updateUserRole(http: HttpClient, rootUrl: string, params: UpdateUserRole$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
   const rb = new RequestBuilder(rootUrl, updateUserRole.PATH, 'put');
   if (params) {
     rb.query('userRole', params.userRole, {});
@@ -29,7 +30,7 @@ export function updateUserRole(http: HttpClient, rootUrl: string, params: Update
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserDto>;
+      return r as StrictHttpResponse<UserResponse>;
     })
   );
 }

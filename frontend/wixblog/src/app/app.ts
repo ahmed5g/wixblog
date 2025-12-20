@@ -1,10 +1,7 @@
-import {Component, HostListener, OnInit, signal} from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { SideBarMenu } from './shared/components/side-bar-menu/side-bar-menu';
-import { AuthenticationService } from './shared/services/services/authentication.service';
-import { AuthResponseDto } from './shared/services/models/auth-response-dto';
-import { CommonModule, NgIf } from '@angular/common';
-import {window} from 'rxjs';
+import {Component, HostListener, inject, OnInit} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import { AuthStore} from './features/auth/authStore';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +11,10 @@ import {window} from 'rxjs';
   styleUrls: ['./app.scss'],
 })
 export class App implements OnInit {
+  private authContext = inject(AuthStore);
   menuVisible = true;
   isMobile = false;
-  sidebarVisible: boolean= false;
+  sidebarVisible: boolean = false;
 
   constructor() {
     this.onResize();
@@ -41,6 +39,9 @@ export class App implements OnInit {
     const scrollTop = event.target.scrollTop;
     this.sidebarVisible = scrollTop > 100; // Show sidebar after scrolling 100px
   }
-  ngOnInit(): void {
+
+
+  ngOnInit() {
+
   }
 }

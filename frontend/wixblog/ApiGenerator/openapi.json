@@ -1,124 +1,53 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Tech WixBlog API",
-    "description": "Complete Blog Application with Google OAuth2, Posts, Comments, Likes, and User Management",
+    "title": "WixBlog API",
+    "description": "WixBlog REST API Documentation",
     "contact": {
-      "name": "Tech WixBlog Team",
-      "email": "support@techwixblog.com"
+      "name": "WixBlog Team",
+      "email": "support@wixblog.com"
     },
     "license": {
       "name": "Apache 2.0",
-      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+      "url": "http://springdoc.org"
     },
-    "version": "v1.0.0"
+    "version": "1.0.0"
   },
   "servers": [
     {
       "url": "http://localhost:8080",
-      "description": "Development Server"
+      "description": "Generated server url"
     }
-  ],
-  "security": [
   ],
   "tags": [
     {
+      "name": "Comments",
+      "description": "Comment management APIs"
+    },
+    {
       "name": "1. Authentication",
       "description": "Authentication endpoints"
+    },
+    {
+      "name": "Posts",
+      "description": "Post management APIs"
     }
   ],
   "paths": {
-    "/api/users/settings": {
-      "put": {
+    "/user/{id}": {
+      "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "updateMySettings",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateSettingsDTO"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/profile": {
-      "put": {
-        "tags": [
-          "user-controller"
-        ],
-        "operationId": "updateMyProfile",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProfileDTO"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/comments/{commentId}": {
-      "put": {
-        "tags": [
-          "comment-controller"
-        ],
-        "operationId": "updateComment",
+        "operationId": "getUserById",
         "parameters": [
           {
-            "name": "postId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
-          },
-          {
-            "name": "commentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "content",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -128,7 +57,46 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommentDTO"
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
@@ -137,21 +105,733 @@
       },
       "delete": {
         "tags": [
-          "comment-controller"
+          "user-controller"
         ],
-        "operationId": "deleteComment",
+        "operationId": "deleteUser",
         "parameters": [
           {
-            "name": "postId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get post by ID (only published)",
+        "operationId": "getPostById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Update post",
+        "operationId": "updatePost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Delete post",
+        "operationId": "deletePost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Post deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/api/v1/comments/{id}": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get comment by ID",
+        "operationId": "getCommentById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Update comment",
+        "operationId": "updateComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCommentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Delete comment",
+        "operationId": "deleteComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "1. Authentication"
+        ],
+        "summary": "Refresh token",
+        "operationId": "refreshToken",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "name": "commentId",
+            "name": "tokenProvider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TokenProvider"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "1. Authentication"
+        ],
+        "summary": "Logout user",
+        "description": "Clears client-side authentication. Note: Short-lived tokens (30 min) will expire automatically.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "login-controller"
+        ],
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get all posts (paginated)",
+        "operationId": "getAllPosts",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelPostResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Create a new post",
+        "operationId": "createPost",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}/like": {
+      "post": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Toggle like on post",
+        "operationId": "toggleLike",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like toggled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}/increment-view": {
+      "post": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Manually increment view count",
+        "operationId": "incrementViewCount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "View count incremented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments": {
+      "post": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Create a new comment",
+        "operationId": "createComment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post or parent comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/{id}/unlike": {
+      "post": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Decrement comment like count",
+        "operationId": "decrementLikeCount",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -167,17 +847,50 @@
         }
       }
     },
-    "/api/admin/users/promote": {
-      "put": {
+    "/api/v1/comments/{id}/like": {
+      "post": {
         "tags": [
-          "admin-controller"
+          "Comments"
+        ],
+        "summary": "Increment comment like count",
+        "operationId": "incrementLikeCount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/{id}/role": {
+      "patch": {
+        "tags": [
+          "user-controller"
         ],
         "operationId": "updateUserRole",
         "parameters": [
           {
-            "name": "userRole",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "role",
             "in": "query",
-            "description": "select a role",
             "required": true,
             "schema": {
               "type": "string",
@@ -195,7 +908,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDTO"
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
@@ -203,381 +916,143 @@
         }
       }
     },
-    "/auth/logout": {
-      "post": {
+    "/api/v1/posts/{id}/status": {
+      "patch": {
         "tags": [
-          "1. Authentication"
+          "Posts"
         ],
-        "operationId": "logout",
+        "summary": "Change post status",
+        "operationId": "changePostStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "ARCHIVED",
+                "DELETED"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/users/update-user-stats": {
-      "post": {
+    "/api/v1/comments/{id}/status": {
+      "patch": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Change comment status",
+        "operationId": "changeCommentStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "DELETED",
+                "HIDDEN"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "getUpdatedStats",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProfileStatsDTO"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/views": {
-      "get": {
-        "tags": [
-          "post-view-controller"
-        ],
-        "operationId": "getPostViews",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostViewDTO"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "post-view-controller"
-        ],
-        "operationId": "trackView",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostViewDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/unpublish": {
-      "post": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "unpublishPost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/publish": {
-      "post": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "publishPost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/likes": {
-      "post": {
-        "tags": [
-          "like-controller"
-        ],
-        "operationId": "likePost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LikeDTO"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "like-controller"
-        ],
-        "operationId": "unlikePost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/comments": {
-      "get": {
-        "tags": [
-          "comment-controller"
-        ],
-        "operationId": "getPostComments",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelCommentDTO"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "comment-controller"
-        ],
-        "operationId": "createComment",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentDTO"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommentDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/": {
-      "post": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "createPosts",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CreatePostDTO"
-                }
-              }
-            }
-          },
-          "required": true
-        },
+        "operationId": "getAllUsers",
         "responses": {
           "200": {
             "description": "OK",
@@ -586,7 +1061,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PostDTO"
+                    "$ref": "#/components/schemas/UserResponse"
                   }
                 }
               }
@@ -595,176 +1070,19 @@
         }
       }
     },
-    "/api/posts/{postId}": {
-      "delete": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "deletePost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "updatePost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePostDTO"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/bulk": {
-      "patch": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "updatePosts",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/UpdatePostDTO"
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PostDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/user": {
-      "get": {
-        "tags": [
-          "1. Authentication"
-        ],
-        "summary": "Get current user",
-        "description": "Returns the currently authenticated user details",
-        "operationId": "getCurrentUser",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponseDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/top-writers": {
+    "/user/statistics": {
       "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "getTopWriters",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
+        "operationId": "getUserStatistics",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedModelUserDTO"
+                  "$ref": "#/components/schemas/UserStatsResponse"
                 }
               }
             }
@@ -772,7 +1090,7 @@
         }
       }
     },
-    "/api/users/search": {
+    "/user/search": {
       "get": {
         "tags": [
           "user-controller"
@@ -780,46 +1098,12 @@
         "operationId": "searchUsers",
         "parameters": [
           {
-            "name": "query",
+            "name": "q",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
           }
         ],
         "responses": {
@@ -828,7 +1112,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedModelUserDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  }
                 }
               }
             }
@@ -836,65 +1123,24 @@
         }
       }
     },
-    "/api/users/my-profile": {
+    "/user/role/{role}": {
       "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "getMyProfile",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts": {
-      "get": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "getPublishedPosts",
+        "operationId": "getUsersByRole",
         "parameters": [
           {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
+            "name": "role",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "type": "string",
+              "enum": [
+                "ROLE_ADMIN",
+                "ROLE_USER",
+                "ROLE_GUEST"
+              ]
             }
           }
         ],
@@ -904,7 +1150,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  }
                 }
               }
             }
@@ -912,11 +1161,295 @@
         }
       }
     },
-    "/api/posts/{slug}": {
+    "/user/me": {
       "get": {
         "tags": [
-          "post-controller"
+          "user-controller"
         ],
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/email/{email}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getUserByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/active": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getActiveUsers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/config": {
+      "get": {
+        "tags": [
+          "1. Authentication"
+        ],
+        "summary": "Get token configuration",
+        "operationId": "getTokenConfig",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}/view-count": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get post view count",
+        "operationId": "getViewCount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Count retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}/like-status": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get post like status for current user",
+        "operationId": "getLikeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{id}/like-count": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get post like count",
+        "operationId": "getLikeCount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Count retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/stats": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get user post statistics",
+        "operationId": "getUserPostStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/slug/{slug}": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get post by slug",
         "operationId": "getPostBySlug",
         "parameters": [
           {
@@ -930,142 +1463,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Post found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostDTO"
+                  "$ref": "#/components/schemas/PostResponse"
                 }
               }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/views/has-viewed": {
-      "get": {
-        "tags": [
-          "post-view-controller"
-        ],
-        "operationId": "hasViewedPost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/views/count": {
-      "get": {
-        "tags": [
-          "post-view-controller"
-        ],
-        "operationId": "getViewCount",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int64"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/likes/users": {
-      "get": {
-        "tags": [
-          "like-controller"
-        ],
-        "operationId": "getUsersWhoLikedPost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
             }
           },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
+          "404": {
+            "description": "Post not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserDTO"
-                  }
+                  "$ref": "#/components/schemas/PostResponse"
                 }
               }
             }
@@ -1073,144 +1485,12 @@
         }
       }
     },
-    "/api/posts/{postId}/likes/has-liked": {
+    "/api/v1/posts/search": {
       "get": {
         "tags": [
-          "like-controller"
+          "Posts"
         ],
-        "operationId": "hasLikedPost",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/{postId}/likes/count": {
-      "get": {
-        "tags": [
-          "like-controller"
-        ],
-        "operationId": "getLikeCount",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int64"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/status/{status}": {
-      "get": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "getPostsByStatus",
-        "parameters": [
-          {
-            "name": "status",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "DRAFT",
-                "PUBLISHED",
-                "ARCHIVED",
-                "DELETED"
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/search": {
-      "get": {
-        "tags": [
-          "post-controller"
-        ],
+        "summary": "Search published posts",
         "operationId": "searchPosts",
         "parameters": [
           {
@@ -1262,7 +1542,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostDTO"
+                  "$ref": "#/components/schemas/PagedModelPostResponse"
                 }
               }
             }
@@ -1270,11 +1550,69 @@
         }
       }
     },
-    "/api/posts/my-posts": {
+    "/api/v1/posts/published": {
       "get": {
         "tags": [
-          "post-controller"
+          "Posts"
         ],
+        "summary": "Get published posts (paginated)",
+        "operationId": "getPublishedPosts",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelPostResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/my-posts": {
+      "get": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get current user's posts",
         "operationId": "getMyPosts",
         "parameters": [
           {
@@ -1318,10 +1656,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PostDTO"
-                  }
+                  "$ref": "#/components/schemas/PagedModelPostResponse"
                 }
               }
             }
@@ -1329,180 +1664,24 @@
         }
       }
     },
-    "/api/posts/my-drafts": {
+    "/api/v1/comments/{id}/replies": {
       "get": {
         "tags": [
-          "post-controller"
+          "Comments"
         ],
-        "operationId": "getMyDrafts",
+        "summary": "Get comment replies",
+        "operationId": "getCommentReplies",
         "parameters": [
           {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "format": "int64"
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/featured": {
-      "get": {
-        "tags": [
-          "post-controller"
-        ],
-        "operationId": "getFeaturedPosts",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelPostDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/comments/my-comments": {
-      "get": {
-        "tags": [
-          "comment-controller"
-        ],
-        "operationId": "getMyComments",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Zero-based page index (0..N)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "The size of the page to be returned",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagedModelCommentDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/users": {
-      "get": {
-        "tags": [
-          "admin-controller"
-        ],
-        "operationId": "getAllUsers",
         "responses": {
           "200": {
             "description": "OK",
@@ -1511,8 +1690,275 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserDTO"
+                    "$ref": "#/components/schemas/CommentResponse"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/user/{userId}": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get comments by user (paginated)",
+        "operationId": "getCommentsByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/stats": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get user comment statistics",
+        "operationId": "getUserCommentStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/post/{postId}": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get comments by post (paginated)",
+        "operationId": "getCommentsByPost",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/post/{postId}/with-replies": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get all comments with replies for a post",
+        "operationId": "getPostCommentsWithReplies",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommentResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comments/post/{postId}/count": {
+      "get": {
+        "tags": [
+          "Comments"
+        ],
+        "summary": "Get post comment count",
+        "operationId": "getPostCommentCount",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/providers/{provider}": {
+      "delete": {
+        "tags": [
+          "user-provider-controller"
+        ],
+        "operationId": "unlinkProvider",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "LOCAL",
+                "GOOGLE",
+                "GITHUB",
+                "FACEBOOK",
+                "LINKEDIN",
+                "TWITTER",
+                "MICROSOFT"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
@@ -1523,9 +1969,35 @@
   },
   "components": {
     "schemas": {
-      "UpdateSettingsDTO": {
+      "UpdateUserRequest": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "profilePicture": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ROLE_ADMIN",
+              "ROLE_USER",
+              "ROLE_GUEST"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
           "emailNotifications": {
             "type": "boolean"
           },
@@ -1538,15 +2010,28 @@
           "newsletterSubscribed": {
             "type": "boolean"
           },
-          "publicProfile": {
-            "type": "boolean"
-          },
           "showOnlineStatus": {
             "type": "boolean"
           }
         }
       },
-      "UserDTO": {
+      "OAuthProviderInfoDto": {
+        "type": "object",
+        "properties": {
+          "providerUserId": {
+            "type": "string"
+          },
+          "linkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserResponse": {
         "type": "object",
         "properties": {
           "id": {
@@ -1559,38 +2044,44 @@
           "name": {
             "type": "string"
           },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
           "profilePicture": {
             "type": "string"
-          },
-          "role": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
           },
           "bio": {
             "type": "string"
           },
-          "websiteUrl": {
-            "type": "string"
+          "role": {
+            "type": "string",
+            "enum": [
+              "ROLE_ADMIN",
+              "ROLE_USER",
+              "ROLE_GUEST"
+            ]
           },
-          "twitterHandle": {
-            "type": "string"
+          "enabled": {
+            "type": "boolean"
           },
-          "githubUsername": {
-            "type": "string"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "linkedinUrl": {
-            "type": "string"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "location": {
-            "type": "string"
+          "lastLoginAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "company": {
-            "type": "string"
-          },
-          "jobTitle": {
-            "type": "string"
+          "lastActivityAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "totalPosts": {
             "type": "integer",
@@ -1616,26 +2107,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "joinDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastLoginAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastActivityAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
           "emailNotifications": {
             "type": "boolean"
           },
@@ -1648,83 +2119,265 @@
           "newsletterSubscribed": {
             "type": "boolean"
           },
+          "showOnlineStatus": {
+            "type": "boolean"
+          },
           "publicProfile": {
             "type": "boolean"
           },
-          "showOnlineStatus": {
-            "type": "boolean"
+          "linkedProviders": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OAuthProviderInfoDto"
+            }
           }
         }
       },
-      "UpdateProfileDTO": {
+      "UpdatePostRequest": {
         "type": "object",
         "properties": {
-          "name": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2147483647,
+            "minLength": 10
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED",
+              "DELETED"
+            ],
+            "readOnly": true
+          },
+          "slug": {
             "type": "string"
           },
-          "bio": {
+          "featuredImage": {
             "type": "string"
           },
-          "websiteUrl": {
-            "type": "string"
+          "readTime": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
           },
-          "twitterHandle": {
-            "type": "string"
+          "viewCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
           },
-          "githubUsername": {
-            "type": "string"
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
           },
-          "linkedinUrl": {
-            "type": "string"
+          "commentCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
           },
-          "location": {
-            "type": "string"
+          "likedByCurrentUser": {
+            "type": "boolean",
+            "readOnly": true
           },
-          "company": {
-            "type": "string"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
           },
-          "jobTitle": {
-            "type": "string"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
           }
         }
       },
-      "CommentDTO": {
+      "AuthorDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "format": "int64"
           },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "profilePicture": {
+            "type": "string"
+          }
+        }
+      },
+      "PostResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
           "content": {
             "type": "string"
           },
+          "summary": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED",
+              "DELETED"
+            ],
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "featuredImage": {
+            "type": "string"
+          },
+          "readTime": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "commentCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "likedByCurrentUser": {
+            "type": "boolean",
+            "readOnly": true
+          },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "readOnly": true
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "readOnly": true
           },
-          "isApproved": {
-            "type": "boolean"
+          "author": {
+            "$ref": "#/components/schemas/AuthorDto"
+          }
+        }
+      },
+      "UpdateCommentRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED",
+              "HIDDEN"
+            ],
+            "readOnly": true
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
+      },
+      "CommentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "content": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED",
+              "HIDDEN"
+            ],
+            "readOnly": true
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "author": {
+            "$ref": "#/components/schemas/AuthorDto"
           },
           "postId": {
             "type": "integer",
             "format": "int64"
-          },
-          "postTitle": {
-            "type": "string"
-          },
-          "authorId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "authorName": {
-            "type": "string"
-          },
-          "authorProfilePicture": {
-            "type": "string"
           },
           "parentCommentId": {
             "type": "integer",
@@ -1733,293 +2386,199 @@
           "replies": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CommentDTO"
+              "$ref": "#/components/schemas/CommentResponse"
             }
-          }
-        }
-      },
-      "UpdateProfileStatsDTO": {
-        "type": "object",
-        "properties": {
-          "postsDelta": {
-            "type": "integer",
-            "format": "int64"
           },
-          "publishedPostsDelta": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "likesDelta": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "commentsDelta": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "viewsDelta": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "PostViewDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "ipAddress": {
-            "type": "string"
-          },
-          "userAgent": {
-            "type": "string"
-          },
-          "viewedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "postId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "postTitle": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userName": {
-            "type": "string"
-          }
-        }
-      },
-      "PostDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "title": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "featuredImage": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "PUBLISHED",
-              "ARCHIVED",
-              "DELETED"
-            ]
-          },
-          "timeToRead": {
+          "replyCount": {
             "type": "integer",
             "format": "int32"
-          },
-          "wordCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isFeatured": {
-            "type": "boolean"
-          },
-          "allowComments": {
-            "type": "boolean"
-          },
-          "viewCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "likeCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "commentCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "authorId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "authorName": {
-            "type": "string"
-          },
-          "authorProfilePicture": {
-            "type": "string"
-          },
-          "likedByCurrentUser": {
-            "type": "boolean"
-          },
-          "viewedByCurrentUser": {
-            "type": "boolean"
           }
         }
       },
-      "LikeDTO": {
+      "RegisterRequest": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "postId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "postTitle": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userName": {
-            "type": "string"
-          }
-        }
-      },
-      "CreateCommentDTO": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string"
-          },
-          "parentCommentId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "CreatePostDTO": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "featuredImage": {
-            "type": "string"
-          },
-          "allowComments": {
-            "type": "boolean"
-          },
-          "isFeatured": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "PUBLISHED",
-              "ARCHIVED",
-              "DELETED"
-            ]
-          }
-        }
-      },
-      "UpdatePostDTO": {
-        "type": "object",
-        "properties": {
-          "postId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "title": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "featuredImage": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "PUBLISHED",
-              "ARCHIVED",
-              "DELETED"
-            ]
-          },
-          "allowComments": {
-            "type": "boolean"
-          },
-          "isFeatured": {
-            "type": "boolean"
-          }
-        }
-      },
-      "AuthResponseDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
           "email": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
             "type": "string"
           },
           "profilePicture": {
             "type": "string"
           },
-          "role": {
+          "bio": {
             "type": "string"
+          }
+        }
+      },
+      "TokenProvider": {
+        "type": "object"
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "CreatePostRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2147483647,
+            "minLength": 10
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED",
+              "DELETED"
+            ],
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "featuredImage": {
+            "type": "string"
+          },
+          "readTime": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "commentCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "likedByCurrentUser": {
+            "type": "boolean",
+            "readOnly": true
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
           },
-          "authenticated": {
-            "type": "boolean"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
+      },
+      "CreateCommentRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED",
+              "HIDDEN"
+            ],
+            "readOnly": true
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "postId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parentCommentId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "postId"
+        ]
+      },
+      "UserStatsResponse": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "activeUsers": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "inactiveUsers": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usersByRole": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         }
       },
@@ -2044,13 +2603,13 @@
           }
         }
       },
-      "PagedModelUserDTO": {
+      "PagedModelPostResponse": {
         "type": "object",
         "properties": {
           "content": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UserDTO"
+              "$ref": "#/components/schemas/PostResponse"
             }
           },
           "page": {
@@ -2058,41 +2617,13 @@
           }
         }
       },
-      "PagedModelPostDTO": {
+      "PagedModelCommentResponse": {
         "type": "object",
         "properties": {
           "content": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PostDTO"
-            }
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "PagedModelPostViewDTO": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PostViewDTO"
-            }
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "PagedModelCommentDTO": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CommentDTO"
+              "$ref": "#/components/schemas/CommentResponse"
             }
           },
           "page": {
@@ -2102,19 +2633,12 @@
       }
     },
     "securitySchemes": {
-      "oauth2": {
-        "type": "oauth2",
-        "flows": {
-          "authorizationCode": {
-            "authorizationUrl": "http://localhost:8080/oauth2/authorization/google",
-            "tokenUrl": "http://localhost:8080/login/oauth2/code/google"
-          }
-        }
-      },
-      "sessionAuth": {
-        "type": "apiKey",
-        "name": "JSESSIONID",
-        "in": "cookie"
+      "bearer-jwt": {
+        "type": "http",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

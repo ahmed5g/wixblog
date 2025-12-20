@@ -1,0 +1,28 @@
+//@import "tailwindcss";
+//
+//
+//  .stepper-wrapper {
+//    @apply max-w-[400px] mx-auto mt-[100px] text-center;
+//  }
+//
+//  .medium-input, .medium-textarea {
+//    @apply block w-full border-none border-b border-[#e6e6e6] py-3 mb-6
+//    text-base outline-none transition-colors duration-200
+//    focus:border-[#292929];
+//  }
+//
+//  .btn-primary {
+//    @apply bg-[#292929] text-white border-none py-2.5 px-6 rounded-full
+//    cursor-pointer text-[15px] transition-opacity duration-200
+//    disabled:opacity-50 disabled:cursor-not-allowed;
+//  }
+//
+//  .step-fade-in {
+//    animation: fadeIn 0.4s ease-in forwards;
+//  }
+//
+//
+//@keyframes fadeIn {
+//  from { opacity: 0; transform: translateY(10px); }
+//  to { opacity: 1; transform: translateY(0); }
+//}
