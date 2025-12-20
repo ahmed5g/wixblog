@@ -1,6 +1,5 @@
 package com.tech.wixblog.service;
 
-
 import com.tech.wixblog.dto.user.LoginRequest;
 import com.tech.wixblog.dto.user.LoginResponse;
 import com.tech.wixblog.exception.BadRequestException;
@@ -26,34 +25,32 @@ public class LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final UserService userService;
 
     public LoginResponse login (LoginRequest loginRequest) {
-        log.debug("Login request: {}", loginRequest);
         Authentication authentication;
-
         User user = userRepository
                 .findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new BadRequestException("Email not registered by administrator yet."));
-
+                .orElseThrow(() -> new BadRequestException(
+                        "Email not registered by administrator yet."));
         if (StringUtils.isEmpty(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
             userRepository.saveAndFlush(user);
         }
-
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getEmail(),
                             loginRequest.getPassword()
                     )
-            );
+                                                               );
         } catch (AuthenticationException ex) {
             throw new BadRequestException("Bad credentials");
         }
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         String token = tokenProvider.createToken(authentication);
         return new LoginResponse(token);
     }
+
+
 }

@@ -30,7 +30,8 @@ public class User extends AuditableEntity {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    @Column(name = "profile_picture")
+    @Lob
+    @Column(name = "profile_picture", columnDefinition = "LONGTEXT")
     private String profilePicture;
     @Column(columnDefinition = "TEXT")
     private String bio;
@@ -94,7 +95,7 @@ public class User extends AuditableEntity {
                 .lastName(lastName)
                 .profilePicture(profilePicture)
                 .oauthProviders(new HashMap<>())
-                .role(Role.ROLE_GUEST)
+                .role(Role.ROLE_USER)
                 .enabled(true)
                 .totalPosts(0L)
                 .publishedPosts(0L)

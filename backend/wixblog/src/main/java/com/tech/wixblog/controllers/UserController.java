@@ -1,9 +1,6 @@
 package com.tech.wixblog.controllers;
 
-import com.tech.wixblog.dto.user.UserStatsResponse;
-import com.tech.wixblog.dto.user.RegisterRequest;
-import com.tech.wixblog.dto.user.UpdateUserRequest;
-import com.tech.wixblog.dto.user.UserResponse;
+import com.tech.wixblog.dto.user.*;
 import com.tech.wixblog.model.enums.Role;
 import com.tech.wixblog.security.CurrentUser;
 import com.tech.wixblog.security.UserPrincipal;
@@ -23,7 +20,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> createUser (
             @Valid @RequestBody RegisterRequest request,
             @CurrentUser UserPrincipal currentUser) {
@@ -35,8 +32,8 @@ public class UserController {
                             "Cannot register new account while already logged in as: " + currentUser.getEmail()
                                 ));
         }
-        UserResponse userDTO = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+        userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/me")

@@ -19,19 +19,21 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class LoginController {
-
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest,
-                                   @CurrentUser UserPrincipal currentUser) {
+    public ResponseEntity<?> login (@Valid @RequestBody LoginRequest loginRequest,
+                                    @CurrentUser UserPrincipal currentUser) {
         if (currentUser != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of(
                             "error", "already_authenticated",
-                            "message", "Cannot login while already authenticated as: " + currentUser.getEmail()
+                            "message",
+                            "Cannot login while already authenticated as: " + currentUser.getEmail()
                                 ));
         }
         return ResponseEntity.ok(loginService.login(loginRequest));
     }
+
+
 }
