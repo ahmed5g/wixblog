@@ -22,9 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 @Tag(name = "Posts", description = "Post management APIs")
 public class PostController {
@@ -236,4 +237,36 @@ public class PostController {
                                         );
         return ResponseEntity.ok(stats);
     }
+
+    @GetMapping("/category/{categorySlug}")
+    public Page<PostResponse> getPostsByCategory (
+            @PathVariable String categorySlug,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
+        return postService.getPostsByCategory(categorySlug, pageable);
+    }
+
+    @GetMapping("/category/{categorySlug}/filter")
+    public Page<PostResponse> getPostsByCategoryAndTags (
+            @PathVariable String categorySlug,
+            @RequestParam Set<String> tags,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
+        return postService.getPostsByCategoryAndTags(categorySlug, tags, pageable);
+    }
+
+    @GetMapping("/tag/{tagSlug}")
+    public Page<PostResponse> getPostsByTag (
+            @PathVariable String tagSlug,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
+        return postService.getPostsByTag(tagSlug, pageable);
+    }
+
+    @PutMapping("/{id}/tags")
+    @Operation(summary = "Update post tags")
+    public PostResponse updatePostTags (
+            @PathVariable Long id,
+            @RequestParam Set<String> newTagNames) {
+        return postService.updatePostTags(id, newTagNames);
+    }
+
+
 }

@@ -26,6 +26,8 @@ public interface PostMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "status", expression = "java(com.tech.wixblog.model.enums.PostStatus.DRAFT)")
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "tags", ignore = true)
     public abstract Post toEntity (CreatePostRequest request);
 
     @Mapping(target = "id", ignore = true)
@@ -39,6 +41,8 @@ public interface PostMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "tags", ignore = true)
     public abstract void updateEntityFromRequest (UpdatePostRequest request,
                                                   @MappingTarget Post post);
 
