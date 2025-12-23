@@ -4,7 +4,7 @@ import {UserAvatar} from '../../../shared/components/user-avatar/user-avatar';
 @Component({
   selector: 'app-header',
   imports: [
-    UserAvatar
+
   ],
   templateUrl: './header.html',
   styleUrl: './header.scss',

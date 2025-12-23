@@ -36,7 +36,7 @@ import { getUserCommentStats } from '../fn/comments/get-user-comment-stats';
 import { GetUserCommentStats$Params } from '../fn/comments/get-user-comment-stats';
 import { incrementLikeCount } from '../fn/comments/increment-like-count';
 import { IncrementLikeCount$Params } from '../fn/comments/increment-like-count';
-import { PagedModelCommentResponse } from '../models/paged-model-comment-response';
+import { PageCommentResponse } from '../models/page-comment-response';
 import { updateComment } from '../fn/comments/update-comment';
 import { UpdateComment$Params } from '../fn/comments/update-comment';
 
@@ -51,7 +51,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `getCommentById()` */
-  static readonly GetCommentByIdPath = '/api/v1/comments/{id}';
+  static readonly GetCommentByIdPath = '/comment/{id}';
 
   /**
    * Get comment by ID.
@@ -84,7 +84,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `updateComment()` */
-  static readonly UpdateCommentPath = '/api/v1/comments/{id}';
+  static readonly UpdateCommentPath = '/comment/{id}';
 
   /**
    * Update comment.
@@ -117,7 +117,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `deleteComment()` */
-  static readonly DeleteCommentPath = '/api/v1/comments/{id}';
+  static readonly DeleteCommentPath = '/comment/{id}';
 
   /**
    * Delete comment.
@@ -150,7 +150,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `createComment()` */
-  static readonly CreateCommentPath = '/api/v1/comments';
+  static readonly CreateCommentPath = '/comment';
 
   /**
    * Create a new comment.
@@ -183,7 +183,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `decrementLikeCount()` */
-  static readonly DecrementLikeCountPath = '/api/v1/comments/{id}/unlike';
+  static readonly DecrementLikeCountPath = '/comment/{id}/unlike';
 
   /**
    * Decrement comment like count.
@@ -216,7 +216,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `incrementLikeCount()` */
-  static readonly IncrementLikeCountPath = '/api/v1/comments/{id}/like';
+  static readonly IncrementLikeCountPath = '/comment/{id}/like';
 
   /**
    * Increment comment like count.
@@ -249,7 +249,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `changeCommentStatus()` */
-  static readonly ChangeCommentStatusPath = '/api/v1/comments/{id}/status';
+  static readonly ChangeCommentStatusPath = '/comment/{id}/status';
 
   /**
    * Change comment status.
@@ -282,7 +282,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `getCommentReplies()` */
-  static readonly GetCommentRepliesPath = '/api/v1/comments/{id}/replies';
+  static readonly GetCommentRepliesPath = '/comment/{id}/replies';
 
   /**
    * Get comment replies.
@@ -315,7 +315,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `getCommentsByUser()` */
-  static readonly GetCommentsByUserPath = '/api/v1/comments/user/{userId}';
+  static readonly GetCommentsByUserPath = '/comment/user/{userId}';
 
   /**
    * Get comments by user (paginated).
@@ -327,7 +327,7 @@ export class CommentsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getCommentsByUser$Response(params: GetCommentsByUser$Params, context?: HttpContext): Observable<StrictHttpResponse<PagedModelCommentResponse>> {
+  getCommentsByUser$Response(params: GetCommentsByUser$Params, context?: HttpContext): Observable<StrictHttpResponse<PageCommentResponse>> {
     return getCommentsByUser(this.http, this.rootUrl, params, context);
   }
 
@@ -341,14 +341,14 @@ export class CommentsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getCommentsByUser(params: GetCommentsByUser$Params, context?: HttpContext): Observable<PagedModelCommentResponse> {
+  getCommentsByUser(params: GetCommentsByUser$Params, context?: HttpContext): Observable<PageCommentResponse> {
     return this.getCommentsByUser$Response(params, context).pipe(
-      map((r: StrictHttpResponse<PagedModelCommentResponse>): PagedModelCommentResponse => r.body)
+      map((r: StrictHttpResponse<PageCommentResponse>): PageCommentResponse => r.body)
     );
   }
 
   /** Path part for operation `getUserCommentStats()` */
-  static readonly GetUserCommentStatsPath = '/api/v1/comments/stats';
+  static readonly GetUserCommentStatsPath = '/comment/stats';
 
   /**
    * Get user comment statistics.
@@ -389,7 +389,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `getCommentsByPost()` */
-  static readonly GetCommentsByPostPath = '/api/v1/comments/post/{postId}';
+  static readonly GetCommentsByPostPath = '/comment/post/{postId}';
 
   /**
    * Get comments by post (paginated).
@@ -401,7 +401,7 @@ export class CommentsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getCommentsByPost$Response(params: GetCommentsByPost$Params, context?: HttpContext): Observable<StrictHttpResponse<PagedModelCommentResponse>> {
+  getCommentsByPost$Response(params: GetCommentsByPost$Params, context?: HttpContext): Observable<StrictHttpResponse<PageCommentResponse>> {
     return getCommentsByPost(this.http, this.rootUrl, params, context);
   }
 
@@ -415,14 +415,14 @@ export class CommentsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getCommentsByPost(params: GetCommentsByPost$Params, context?: HttpContext): Observable<PagedModelCommentResponse> {
+  getCommentsByPost(params: GetCommentsByPost$Params, context?: HttpContext): Observable<PageCommentResponse> {
     return this.getCommentsByPost$Response(params, context).pipe(
-      map((r: StrictHttpResponse<PagedModelCommentResponse>): PagedModelCommentResponse => r.body)
+      map((r: StrictHttpResponse<PageCommentResponse>): PageCommentResponse => r.body)
     );
   }
 
   /** Path part for operation `getPostCommentsWithReplies()` */
-  static readonly GetPostCommentsWithRepliesPath = '/api/v1/comments/post/{postId}/with-replies';
+  static readonly GetPostCommentsWithRepliesPath = '/comment/post/{postId}/with-replies';
 
   /**
    * Get all comments with replies for a post.
@@ -455,7 +455,7 @@ export class CommentsService extends BaseService {
   }
 
   /** Path part for operation `getPostCommentCount()` */
-  static readonly GetPostCommentCountPath = '/api/v1/comments/post/{postId}/count';
+  static readonly GetPostCommentCountPath = '/comment/post/{postId}/count';
 
   /**
    * Get post comment count.
