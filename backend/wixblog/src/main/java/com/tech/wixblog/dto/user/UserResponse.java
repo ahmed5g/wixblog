@@ -49,5 +49,12 @@ public class UserResponse {
     @Builder.Default
     private Map<AuthProvider, OAuthProviderInfoDto> linkedProviders = Map.of();
 
+    /*@Pattern(regexp = "^[a-zA-Z0-9\\s,.-]*$", message = "Invalid characters in interests")
+    private String interests;*/
+
+   /* private Boolean isFollowing;
+    private Boolean isFollowedBy;
+    private LocalDateTime followedAt;*/
+
 
 }

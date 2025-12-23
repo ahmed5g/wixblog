@@ -45,6 +45,52 @@ public class User extends AuditableEntity {
     private List<Post> posts = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<User> following = new HashSet<>();
+
+    // Followed by other users (inverse relationship)
+    @ManyToMany(mappedBy = "following")
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<User> followers = new HashSet<>();
+
+    // Followed categories (simple many-to-many)
+    @ManyToMany
+    @JoinTable(
+            name = "user_followed_categories",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Category> followedCategories = new HashSet<>();
+
+    // Followed tags (simple many-to-many)
+    @ManyToMany
+    @JoinTable(
+            name = "user_followed_tags",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Tag> followedTags = new HashSet<>();
+
+
+
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
     @Column(name = "last_activity_at")
@@ -242,5 +288,58 @@ public class User extends AuditableEntity {
 
     public boolean isAdmin () {
         return this.role == Role.ROLE_ADMIN;
+    }
+
+
+
+
+    // ========== HELPER METHODS ==========
+
+    public void followUser(User userToFollow) {
+        if (!this.equals(userToFollow)) {
+            this.following.add(userToFollow);
+            userToFollow.getFollowers().add(this);
+        }
+    }
+
+    public void unfollowUser(User userToUnfollow) {
+        this.following.remove(userToUnfollow);
+        userToUnfollow.getFollowers().remove(this);
+    }
+
+    public void followCategory(Category category) {
+        this.followedCategories.add(category);
+    }
+
+    public void unfollowCategory(Category category) {
+        this.followedCategories.remove(category);
+    }
+
+    public void followTag(Tag tag) {
+        this.followedTags.add(tag);
+    }
+
+    public void unfollowTag(Tag tag) {
+        this.followedTags.remove(tag);
+    }
+
+    public boolean isFollowingUser(User user) {
+        return this.following.contains(user);
+    }
+
+    public boolean isFollowingCategory(Category category) {
+        return this.followedCategories.contains(category);
+    }
+
+    public boolean isFollowingTag(Tag tag) {
+        return this.followedTags.contains(tag);
+    }
+
+    public int getFollowingCount() {
+        return this.following.size();
+    }
+
+    public int getFollowerCount() {
+        return this.followers.size();
     }
 }
