@@ -1,8 +1,8 @@
 package com.tech.wixblog.repository;
 
-import com.tech.wixblog.model.enums.Role;
 import com.tech.wixblog.model.User;
 import com.tech.wixblog.model.enums.AuthProvider;
+import com.tech.wixblog.model.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +45,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN u.oauthProviders p WHERE KEY(p) = :provider AND p.providerUserId = :providerUserId")
     Optional<User> findByOAuthProvider(@Param("provider") AuthProvider provider,
                                        @Param("providerUserId") String providerUserId);
+
+
+
+
+
 }

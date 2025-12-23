@@ -52,11 +52,8 @@ public class SecurityConfig {
                 SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(
                 auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/token/refresh/**").permitAll()
-                        .requestMatchers("/api/v1/posts/published").permitAll()
-                        .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated());
@@ -97,12 +94,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource () {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(
                 List.of("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
+        config.setExposedHeaders(List.of("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

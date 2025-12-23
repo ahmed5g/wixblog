@@ -45,6 +45,9 @@ public class User extends AuditableEntity {
     private List<Post> posts = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+
+
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
     @Column(name = "last_activity_at")
@@ -243,4 +246,9 @@ public class User extends AuditableEntity {
     public boolean isAdmin () {
         return this.role == Role.ROLE_ADMIN;
     }
+
+
+
+
+
 }
