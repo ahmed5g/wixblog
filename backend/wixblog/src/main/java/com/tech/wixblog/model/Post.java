@@ -38,6 +38,8 @@ public class Post extends AuditableEntity {
     @Column(name = "slug", unique = true)
     private String slug;
 
+    @Column(columnDefinition = "TEXT")
+    private String excerpt;
     @Column(name = "featured_image")
     private String featuredImage;
 
@@ -74,6 +76,32 @@ public class Post extends AuditableEntity {
     )
     @Builder.Default
     private Set<User> likedByUsers = new HashSet<>();
+
+    // REQUIRED: Primary category
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    // OPTIONAL: Multiple tags
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @Builder.Default
+    private Set<Tag> tags = new HashSet<>();
+
+    // For additional, non-primary categorization
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "post_secondary_categories",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    @Builder.Default
+    private Set<Category> secondaryCategories = new HashSet<>();
+
 
     // Helper methods
     public void incrementViewCount() {
@@ -137,5 +165,19 @@ public class Post extends AuditableEntity {
 
     public Long getCommentCount() {
         return commentCount != null ? commentCount : 0L;
+    }
+
+    // Helper method to add tag with usage tracking
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.getPosts().add(this);
+        tag.incrementUsage();
+    }
+
+    // Helper method to remove tag
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.getPosts().remove(this);
+        tag.decrementUsage();
     }
 }

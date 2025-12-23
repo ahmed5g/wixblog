@@ -1,5 +1,7 @@
 package com.tech.wixblog.dto.post;
 
+import com.tech.wixblog.dto.TagResponse;
+import com.tech.wixblog.dto.category.CategoryResponseDto;
 import com.tech.wixblog.model.enums.PostStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @SuperBuilder
@@ -19,6 +23,7 @@ public abstract class BasePostDto {
     private String title;
     private String content;
     private String summary;
+    private String excerpt;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private PostStatus status;
     private String slug;
@@ -37,4 +42,23 @@ public abstract class BasePostDto {
     private LocalDateTime createdAt;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime updatedAt;
+    private CategoryResponseDto category;
+    private List<CategoryResponseDto> secondaryCategories;
+    // Tags
+    private Set<TagResponse> tags;
+    // Statistics
+
+   /* private Integer saveCount;
+    private Integer shareCount;
+
+    // User-specific data (if authenticated)
+    private Boolean isLikedByUser;
+    private Boolean isSavedByUser;
+    private Boolean isFollowedByUser;
+
+    // SEO
+    private String metaDescription;
+    private String metaKeywords;*/
+
+
 }
