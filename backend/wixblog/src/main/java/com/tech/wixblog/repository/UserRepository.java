@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -50,35 +49,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 
-    // FIXED: Users followed by people you follow
-    @Query("SELECT DISTINCT f2 FROM User u " +
-            "JOIN u.following f1 " +          // People you follow
-            "JOIN f1.following f2 " +          // People they follow
-            "WHERE u.id = :userId " +
-            "AND f2.id != :userId " +          // Exclude yourself
-            "AND f2 NOT IN (SELECT f FROM User u2 JOIN u2.following f WHERE u2.id = :userId)") // Exclude already followed
-    List<User> findUsersFollowedByFollowedUsers (@Param("userId") Long userId, Pageable pageable);
 
-    // Alternative simpler version
-    @Query("SELECT u FROM User u " +
-            "WHERE u.id IN " +
-            "(SELECT f2.id FROM User u1 " +
-            " JOIN u1.following f1 " +
-            " JOIN f1.following f2 " +
-            " WHERE u1.id = :userId) " +
-            "AND u.id != :userId " +
-            "AND u.id NOT IN " +
-            "(SELECT f.id FROM User u2 JOIN u2.following f WHERE u2.id = :userId)")
-    List<User> findSuggestedUsers(@Param("userId") Long userId, Pageable pageable);
-
-    // Even simpler: Get users with mutual connections
-    @Query("SELECT u FROM User u " +
-            "WHERE u.id IN " +
-            "(SELECT f2.id FROM User u1 " +
-            " JOIN u1.following f1 " +
-            " JOIN f1.following f2 " +
-            " WHERE u1.id = :userId " +
-            " GROUP BY f2.id " +
-            " HAVING COUNT(f1.id) >= 2)") // At least 2 mutual connections
-    List<User> findUsersWithMutualConnections(@Param("userId") Long userId, Pageable pageable);
 }
