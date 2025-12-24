@@ -11,6 +11,22 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
+  .page-wrapper { @apply max-w-[1100px] mx-auto px-4 py-8 md:py-12 font-sans text-[#242424]; }
+
+
+  /* Hero Container - Forced Centering */
+  .hero-container {
+    @apply flex flex-col items-center justify-center w-full mb-20 mt-8 text-center;
+  }
+
+  .page-title {
+    /* text-center ensures the text itself is centered within its block */
+    @apply text-[48px]  md:text-[64px] font-bold text-center !mb-10 tracking-tight leading-none w-full;
+  }
+
+
+
+
   /* Serif font for that "Editorial" feel */
   h1, h2, h3 {
     @apply font-serif tracking-tight text-[#292929];
@@ -37,8 +53,19 @@
 
   /* The rounded pill buttons */
   .btn-black {
-    @apply bg-[#292929] w-full text-white py-3 px-10 rounded-full text-sm font-medium
-    transition-all hover:bg-black active:scale-95 disabled:opacity-20 ;
+    /* Using standard CSS for the radius to bypass any utility conflicts */
+    border-radius: 999px !important;
+    @apply bg-[#191919] text-white py-2 px-6 text-sm font-medium
+    border-none cursor-pointer transition-all hover:bg-black
+    active:scale-[0.97] inline-flex items-center justify-center;
+  }
+
+  .btn-auth {
+    /* Using standard CSS for the radius to bypass any utility conflicts */
+    ;
+    @apply bg-[#191919] text-white py-2 px-6 text-sm font-medium
+    border-slate-950 cursor-pointer transition-all hover:bg-black
+    active:scale-[0.97] inline-flex items-center justify-center !rounded-sm;
   }
 
   .btn-green {

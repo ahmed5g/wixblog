@@ -5,7 +5,8 @@ import {PrivacyPolicy} from './util/privacy-policy';
 import {Contact} from './util/contact';
 import {PostDetails} from './post/post-details';
 import {Profile} from './user/profile';
-import {postUpload} from './post/post-upload';
+import {TopicsExplorer} from './topics/topics-explorer';
+import {Topic} from './topics/topic';
 
 
 export const Pages: Routes=[
@@ -22,6 +23,8 @@ export const Pages: Routes=[
     path: "contact", component: Contact
   },
   {path: "about", component: About},
+  {path: "topics", component: TopicsExplorer},
+  {path: "singletopic", component: Topic},
 
   {path: "profile/:provider", component: Profile},
 

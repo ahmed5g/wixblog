@@ -175,8 +175,9 @@ a:hover {
   padding-bottom: 100px;
 }
 .section-sm {
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 20px;
+  text-align: center;
+
 }
 
 .bg-cover {

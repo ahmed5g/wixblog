@@ -1,7 +1,7 @@
 package com.tech.wixblog.service;
 
-import com.tech.wixblog.controllers.TagMapper;
 import com.tech.wixblog.dto.TagResponse;
+import com.tech.wixblog.mapper.TagMapper;
 import com.tech.wixblog.model.Category;
 import com.tech.wixblog.model.Tag;
 import com.tech.wixblog.repository.CategoryRepository;
