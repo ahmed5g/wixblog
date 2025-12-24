@@ -1,4 +1,4 @@
-package com.tech.wixblog.controllers;
+package com.tech.wixblog.mapper;
 
 import com.tech.wixblog.dto.TagResponse;
 import com.tech.wixblog.model.Tag;
