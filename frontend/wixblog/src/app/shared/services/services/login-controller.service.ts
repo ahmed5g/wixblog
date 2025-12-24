@@ -7,12 +7,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { BaseService } from '../base-service';
-import { ApiConfiguration } from '../api-configuration';
-import { StrictHttpResponse } from '../strict-http-response';
+import { BaseService } from '../../services/base-service';
+import { ApiConfiguration } from '../../services/api-configuration';
+import { StrictHttpResponse } from '../../services/strict-http-response';
 
-import { login } from '../fn/login-controller/login';
-import { Login$Params } from '../fn/login-controller/login';
+import { login } from '../../services/fn/login-controller/login';
+import { Login$Params } from '../../services/fn/login-controller/login';
 
 @Injectable({ providedIn: 'root' })
 export class LoginControllerService extends BaseService {
