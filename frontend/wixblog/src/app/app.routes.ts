@@ -1,5 +1,5 @@
 import {Routes} from '@angular/router';
-import {Layout} from './layout/components/layout';
+
 import {NotFound} from './features/util/not-found';
 import {Landing} from './features/landing';
 import {GetStarted} from './features/home/get-started';
@@ -10,6 +10,7 @@ import {Registration} from './features/auth/register/Stepper/registration';
 import {UserInfo} from './features/auth/register/Stepper/user-info';
 import {RegisterStepper} from './features/auth/register/register-wrapper';
 import {guestGuard} from './features/auth/guest.guard';
+import {Layout} from './layout/layout';
 
 
 export const routes: Routes=[
